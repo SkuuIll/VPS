@@ -222,7 +222,7 @@ menu_herramientas() {
 
     ui_menu_section "EXTRAS"
     (( num++ )); scripts+=("paysnd.sh");     ui_menu_item "$num" "Payload Fuerza Bruta"
-    (( num++ )); scripts+=("speed.py");      ui_menu_item "$num" "Prueba de Velocidad"
+    (( num++ )); scripts+=("speedtest.sh");  ui_menu_item "$num" "Prueba de Velocidad"
 
     ui_bar
     ui_menu_back 0

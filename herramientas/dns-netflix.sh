@@ -18,14 +18,16 @@ main() {
     ui_menu_item 1 "Google DNS (8.8.8.8 / 8.8.4.4)"
     ui_menu_item 2 "Cloudflare DNS (1.1.1.1 / 1.0.0.1)"
     ui_menu_item 3 "OpenDNS (208.67.222.222)"
-    ui_menu_item 4 "DNS personalizado"
-    ui_menu_item 5 "Restaurar DNS original"
+    ui_menu_item 4 "AdGuard DNS (1.1.1.1 - Bloquea Anuncios)"
+    ui_menu_item 5 "Quad9 DNS (9.9.9.9 - Bloquea Malware)"
+    ui_menu_item 6 "DNS personalizado"
+    ui_menu_item 7 "Restaurar DNS original"
     ui_bar
     ui_menu_back 0
     ui_bar
 
     local sel
-    sel=$(ui_select 5)
+    sel=$(ui_select 7)
 
     local dns1="" dns2=""
 
@@ -33,11 +35,13 @@ main() {
         1) dns1="8.8.8.8";     dns2="8.8.4.4" ;;
         2) dns1="1.1.1.1";     dns2="1.0.0.1" ;;
         3) dns1="208.67.222.222"; dns2="208.67.220.220" ;;
-        4)
+        4) dns1="94.140.14.14";   dns2="94.140.15.15" ;; # AdGuard
+        5) dns1="9.9.9.9";        dns2="149.112.112.112" ;; # Quad9
+        6)
             dns1=$(ui_input "DNS primario" "^[0-9.]+$")
             dns2=$(ui_input "DNS secundario" "^[0-9.]+$")
             ;;
-        5)
+        7)
             if [[ -f /etc/resolv.conf.bak ]]; then
                 mv -f /etc/resolv.conf.bak /etc/resolv.conf
                 ui_success "DNS restaurado al original"

@@ -26,6 +26,15 @@ block_bt() {
     iptables -A FORWARD -p tcp --dport ${bt_ports} -j DROP 2>/dev/null
     iptables -A FORWARD -p udp --dport ${bt_ports} -j DROP 2>/dev/null
 
+    iptables -A OUTPUT -m string --string "BitTorrent" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -A OUTPUT -m string --string "BitTorrent protocol" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -A OUTPUT -m string --string ".torrent" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -A OUTPUT -m string --string "announce.php?passkey=" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -A OUTPUT -m string --string "torrent" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -A OUTPUT -m string --string "peer_id=" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -A OUTPUT -p tcp --dport ${bt_ports} -j DROP 2>/dev/null
+    iptables -A OUTPUT -p udp --dport ${bt_ports} -j DROP 2>/dev/null
+
     # Guardar reglas
     if has_command iptables-save; then
         iptables-save > /etc/iptables.rules 2>/dev/null
@@ -47,6 +56,15 @@ unblock_bt() {
     iptables -D FORWARD -m string --string "peer_id=" --algo bm --to 65535 -j DROP 2>/dev/null
     iptables -D FORWARD -p tcp --dport 6881:6999 -j DROP 2>/dev/null
     iptables -D FORWARD -p udp --dport 6881:6999 -j DROP 2>/dev/null
+
+    iptables -D OUTPUT -m string --string "BitTorrent" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -D OUTPUT -m string --string "BitTorrent protocol" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -D OUTPUT -m string --string ".torrent" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -D OUTPUT -m string --string "announce.php?passkey=" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -D OUTPUT -m string --string "torrent" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -D OUTPUT -m string --string "peer_id=" --algo bm --to 65535 -j DROP 2>/dev/null
+    iptables -D OUTPUT -p tcp --dport 6881:6999 -j DROP 2>/dev/null
+    iptables -D OUTPUT -p udp --dport 6881:6999 -j DROP 2>/dev/null
 
     if has_command iptables-save; then
         iptables-save > /etc/iptables.rules 2>/dev/null
