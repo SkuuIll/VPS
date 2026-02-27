@@ -3,7 +3,7 @@
 declare -A cor=( [0]="\033[1;37m" [1]="\033[1;34m" [2]="\033[1;32m" [3]="\033[1;36m" [4]="\033[1;31m" )
 clear
 clear
-SCPdir="/etc/VPS-MX"
+SCPdir="/etc/VPS"
 SCPfrm="${SCPdir}/herramientas" && [[ ! -d ${SCPfrm} ]] && exit
 SCPinst="${SCPdir}/protocolos"&& [[ ! -d ${SCPinst} ]] && exit
 dirapache="/usr/local/lib/ubuntn/apache/ver" && [[ ! -d ${dirapache} ]] && exit
@@ -88,7 +88,7 @@ fun_squid  () {
   }
 msg -bar
 msg -tit
-msg -ama "         INSTALADOR SQUID VPS-MX By @Kalix1"
+msg -ama "         INSTALADOR SQUID VPS By @Kalix1"
 msg -bar
 fun_ip
 echo -ne " $(fun_trans "Confirme su ip")\033[1;91m"; read -p ": " -e -i $IP ip
@@ -218,7 +218,7 @@ echo -e "http_port $pts" >> $var_squid
 done
 echo -e "
 #nome
-visible_hostname VPS-MX
+visible_hostname VPS
 
 via off
 forwarded_for off
@@ -257,7 +257,7 @@ echo -e "http_port $pts" >> $var_squid
 done
 echo -e "
 #HostName
-visible_hostname VPS-MX
+visible_hostname VPS
 
 via off
 forwarded_for off

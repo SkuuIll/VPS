@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX -- Sistema de Expiracion de Cuentas
+# VPS -- Sistema de Expiracion de Cuentas
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root

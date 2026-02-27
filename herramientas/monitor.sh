@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX -- Monitor de Usuarios en Tiempo Real
+# VPS -- Monitor de Usuarios en Tiempo Real
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root

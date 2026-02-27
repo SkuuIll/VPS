@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Administrar Puertos Activos
+# VPS — Administrar Puertos Activos
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root

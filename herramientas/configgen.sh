@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX -- Generador de Configs para Clientes
+# VPS -- Generador de Configs para Clientes
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root
@@ -77,7 +77,7 @@ gen_openvpn() {
     local client_key="/etc/openvpn/client.key"
     local ta_key="/etc/openvpn/ta.key"
 
-    local output="/root/VPS-MX-client.ovpn"
+    local output="/root/VPS-client.ovpn"
 
     cat > "$output" << EOF
 client
@@ -128,7 +128,7 @@ gen_ssh_config() {
 
     cat > "$output" << EOF
 ============================================
-  CONFIGURACION SSH/SSL - VPS-MX
+  CONFIGURACION SSH/SSL - VPS
 ============================================
   Servidor:  ${SERVER_IP}
   SSH Port:  ${ssh_port}
@@ -183,7 +183,7 @@ gen_v2ray_config() {
     cat > "$output" << EOF
 {
   "v": "2",
-  "ps": "VPS-MX Server",
+  "ps": "VPS Server",
   "add": "${SERVER_IP}",
   "port": "${port:-443}",
   "id": "${uuid:-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}",
@@ -200,7 +200,7 @@ gen_v2ray_config() {
 EOF
 
     # Generar link vmess://
-    local vmess_json='{"v":"2","ps":"VPS-MX","add":"'${SERVER_IP}'","port":"'${port:-443}'","id":"'${uuid}'","aid":"0","net":"ws","type":"none","path":"/"}'
+    local vmess_json='{"v":"2","ps":"VPS","add":"'${SERVER_IP}'","port":"'${port:-443}'","id":"'${uuid}'","aid":"0","net":"ws","type":"none","path":"/"}'
     local vmess_link="vmess://$(echo -n "$vmess_json" | base64 -w 0)"
 
     ui_success "Config V2Ray generada"

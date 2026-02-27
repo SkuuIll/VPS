@@ -1,9 +1,9 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Configuración Central
+# VPS — Configuración Central
 # ============================================================
 # Este es el ÚNICO archivo que cada script necesita cargar:
-#   source /etc/VPS-MX/lib/config.sh
+#   source /etc/VPS/lib/config.sh
 # Carga automáticamente todas las demás librerías y define
 # las variables globales del proyecto.
 # ============================================================
@@ -17,13 +17,13 @@ export VPS_CODENAME="Modernizado"
 
 # ── Rutas principales ──
 # Soporta tanto la ruta de desarrollo como la de producción
-if [[ -d "/root/VPS-MX-DEV/lib" && -f "/root/VPS-MX-DEV/lib/config.sh" ]]; then
-    export VPS_BASE="/root/VPS-MX-DEV"
+if [[ -d "/root/VPS/lib" && -f "/root/VPS/lib/config.sh" ]]; then
+    export VPS_BASE="/root/VPS"
 else
-    export VPS_BASE="/etc/VPS-MX"
+    export VPS_BASE="/etc/VPS"
 fi
 
-export VPS_DIR="/etc/VPS-MX"
+export VPS_DIR="/etc/VPS"
 export VPS_LIB="${VPS_BASE}/lib"
 export VPS_CTRL="${VPS_DIR}/controlador"
 export VPS_TOOLS="${VPS_DIR}/herramientas"
@@ -34,8 +34,8 @@ export VPS_LOGS="${VPS_DIR}/logs"
 
 # ── Archivos de datos ──
 export VPS_IP_CACHE="${VPS_DIR}/MEUIPvps"
-export VPS_LOG_FILE="${VPS_DIR}/vps-mx.log"
-export VPS_PANEL_NAME="VPS-MX"
+export VPS_LOG_FILE="${VPS_DIR}/vps.log"
+export VPS_PANEL_NAME="VPS"
 
 # ── Archivos del controlador ──
 export VPS_USERCODES="${VPS_CTRL}/usercodes"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Utilidades Comunes
+# VPS — Utilidades Comunes
 # ============================================================
 # Uso: source este archivo desde lib/config.sh
 # Funciones de validación, logging, backup, y helpers generales.
@@ -10,7 +10,7 @@
 _VPS_UTILS_LOADED=1
 
 # ── Logging ──
-_LOG_FILE="${VPS_DIR:-/etc/VPS-MX}/vps-mx.log"
+_LOG_FILE="${VPS_DIR:-/etc/VPS}/vps.log"
 
 log() {
     local level="$1"
@@ -171,7 +171,7 @@ check_internet() {
 # ── Trap handler para limpieza ──
 cleanup() {
     # Limpiar archivos temporales
-    rm -f /tmp/vps-mx-*.tmp 2>/dev/null
+    rm -f /tmp/vps-*.tmp 2>/dev/null
     tput cnorm 2>/dev/null  # Restaurar cursor
 }
 trap cleanup EXIT

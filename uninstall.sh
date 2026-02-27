@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Desinstalador
+# VPS — Desinstalador
 # ============================================================
 set -euo pipefail
 
@@ -11,7 +11,7 @@ BYELLOW='\033[1;33m'
 BCYAN='\033[1;36m'
 BWHITE='\033[1;37m'
 
-INSTALL_DIR="/etc/VPS-MX"
+INSTALL_DIR="/etc/VPS"
 
 bar() {
     printf "${BYELLOW}"
@@ -27,13 +27,13 @@ fi
 
 clear
 bar
-echo -e "${BRED}  ⚠  DESINSTALADOR VPS-MX${RST}"
+echo -e "${BRED}  ⚠  DESINSTALADOR VPS${RST}"
 bar
 echo ""
 echo -e "  ${BWHITE}Esto eliminará:${RST}"
-echo -e "  ${BRED}•${RST} Panel VPS-MX (${INSTALL_DIR})"
+echo -e "  ${BRED}•${RST} Panel VPS (${INSTALL_DIR})"
 echo -e "  ${BRED}•${RST} Comandos CLI (VPS, vps)"
-echo -e "  ${BRED}•${RST} Servicios systemd de VPS-MX"
+echo -e "  ${BRED}•${RST} Servicios systemd de VPS"
 echo ""
 echo -e "  ${BYELLOW}Los servicios instalados (squid, stunnel4, dropbear,${RST}"
 echo -e "  ${BYELLOW}openvpn, etc.) NO serán eliminados.${RST}"
@@ -45,7 +45,7 @@ read -r backup_answer
 backup_answer="${backup_answer:-s}"
 
 if [[ "$backup_answer" == @(s|S|y|Y) ]]; then
-    backup_name="/root/VPS-MX-backup-$(date +%Y%m%d_%H%M%S)"
+    backup_name="/root/VPS-backup-$(date +%Y%m%d_%H%M%S)"
     if [[ -d "$INSTALL_DIR" ]]; then
         cp -r "$INSTALL_DIR" "$backup_name"
         echo -e " ${BGREEN}✔${RST} Backup creado: ${BWHITE}${backup_name}${RST}"
@@ -67,9 +67,9 @@ echo -e " ${BCYAN}▸${RST} Deteniendo servicios..."
 systemctl stop badvpn-udpgw 2>/dev/null || true
 systemctl disable badvpn-udpgw 2>/dev/null || true
 rm -f /etc/systemd/system/badvpn-udpgw.service 2>/dev/null
-systemctl stop vps-mx-monitor 2>/dev/null || true
-systemctl disable vps-mx-monitor 2>/dev/null || true
-rm -f /etc/systemd/system/vps-mx-monitor.service 2>/dev/null
+systemctl stop vps-monitor 2>/dev/null || true
+systemctl disable vps-monitor 2>/dev/null || true
+rm -f /etc/systemd/system/vps-monitor.service 2>/dev/null
 systemctl daemon-reload 2>/dev/null || true
 
 # Matar procesos relacionados
@@ -80,10 +80,10 @@ pkill -f 'PGet.py\|POpen.py\|PPriv.py\|PPub.py\|PDirect.py' 2>/dev/null || true
 # Eliminar comandos CLI
 echo -e " ${BCYAN}▸${RST} Eliminando comandos..."
 rm -f /usr/local/bin/VPS /usr/local/bin/vps 2>/dev/null
-rm -f /usr/bin/vps-mx /usr/bin/VPS-MX /bin/VPS-MX /bin/menu 2>/dev/null
+rm -f /usr/bin/vps /usr/bin/VPS /bin/VPS /bin/menu 2>/dev/null
 
 # Eliminar sysctl config
-rm -f /etc/sysctl.d/99-vps-mx.conf 2>/dev/null
+rm -f /etc/sysctl.d/99-vps.conf 2>/dev/null
 sysctl --system > /dev/null 2>&1 || true
 
 # Eliminar directorio principal
@@ -94,7 +94,7 @@ fi
 
 echo ""
 bar
-echo -e " ${BGREEN}✔${RST} VPS-MX desinstalado completamente"
+echo -e " ${BGREEN}✔${RST} VPS desinstalado completamente"
 [[ -n "${backup_name:-}" ]] && echo -e " ${BCYAN}ℹ${RST} Tu backup está en: ${BWHITE}${backup_name}${RST}"
 bar
 echo ""

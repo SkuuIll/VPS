@@ -1,18 +1,18 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX -- Menu Principal v2.0
+# VPS -- Menu Principal v2.0
 # ============================================================
 # Comando: VPS
 # ============================================================
 
 # -- Cargar librerias --
 VPS_LIB_PATH="$(dirname "$(readlink -f "$0")")/lib"
-[[ ! -d "$VPS_LIB_PATH" ]] && VPS_LIB_PATH="/etc/VPS-MX/lib"
+[[ ! -d "$VPS_LIB_PATH" ]] && VPS_LIB_PATH="/etc/VPS/lib"
 source "${VPS_LIB_PATH}/config.sh"
 
 check_root
 disable_ipv6
-[[ ! -d "$VPS_DIR" ]] && { ui_error "VPS-MX no esta instalado correctamente"; exit 1; }
+[[ ! -d "$VPS_DIR" ]] && { ui_error "VPS no esta instalado correctamente"; exit 1; }
 
 # ================================
 # SUBCOMANDOS (background)
@@ -50,11 +50,11 @@ autorun_status() {
 toggle_autorun() {
     if [[ -f /etc/bash.bashrc-bakup ]]; then
         mv -f /etc/bash.bashrc-bakup /etc/bash.bashrc
-        sed -i '\|/etc/VPS-MX/menu|d' /etc/bash.bashrc
+        sed -i '\|/etc/VPS/menu|d' /etc/bash.bashrc
         ui_success "Auto-inicio removido"
     elif [[ -f /etc/bash.bashrc ]]; then
         cp /etc/bash.bashrc /etc/bash.bashrc-bakup
-        echo '/etc/VPS-MX/menu' >> /etc/bash.bashrc
+        echo '/etc/VPS/menu' >> /etc/bash.bashrc
         ui_success "Auto-inicio activado"
     fi
     ui_bar
@@ -87,7 +87,7 @@ update_script() {
     ui_clear
     ui_bar
     ui_title_small
-    echo -e "${THEME_HEADER}        ACTUALIZAR VPS-MX${RST}"
+    echo -e "${THEME_HEADER}        ACTUALIZAR VPS${RST}"
     ui_bar
     ui_info "Para actualizar:"
     echo -e "  ${BWHITE}1.${RST} Descarga la ultima version"
@@ -99,7 +99,7 @@ remove_script() {
     ui_clear
     ui_bar
     ui_title_small
-    echo -e "${BRED}      DESINSTALAR VPS-MX${RST}"
+    echo -e "${BRED}      DESINSTALAR VPS${RST}"
     ui_bar
     if ui_confirm "Confirmar desinstalacion?" "n"; then
         if [[ -f "${VPS_BASE}/uninstall.sh" ]]; then

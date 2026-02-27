@@ -2,7 +2,7 @@
 #25/01/2021 by @Kalix1
 clear
 clear
-SCPdir="/etc/VPS-MX"
+SCPdir="/etc/VPS"
 SCPfrm="${SCPdir}/herramientas" && [[ ! -d ${SCPfrm} ]] && exit
 SCPinst="${SCPdir}/protocolos"&& [[ ! -d ${SCPinst} ]] && exit
 declare -A cor=( [0]="\033[1;37m" [1]="\033[1;34m" [2]="\033[1;31m" [3]="\033[1;33m" [4]="\033[1;32m" )
@@ -69,7 +69,7 @@ msg -bar
 echo -ne "\033[1;97mRespuesta de encabezado (200,101,404,500,etc): \033[1;92m" && read rescabeza
 msg -bar
 (
-less << PYTHON  > /etc/VPS-MX/protocolos/PDirect.py
+less << PYTHON  > /etc/VPS/protocolos/PDirect.py
 import socket, threading, thread, select, signal, sys, time, getopt
 
 # Listen
@@ -341,9 +341,9 @@ if __name__ == '__main__':
 PYTHON
 ) > $HOME/proxy.log
 
-chmod +x /etc/VPS-MX/protocolos/PDirect.py
+chmod +x /etc/VPS/protocolos/PDirect.py
 
-screen -dmS pydic-"$porta_socket" python ${SCPinst}/PDirect.py "$porta_socket" "$texto_soket" && echo ""$porta_socket" "$texto_soket"" >> /etc/VPS-MX/PortPD.log
+screen -dmS pydic-"$porta_socket" python ${SCPinst}/PDirect.py "$porta_socket" "$texto_soket" && echo ""$porta_socket" "$texto_soket"" >> /etc/VPS/PortPD.log
 }
 
 
@@ -368,8 +368,8 @@ pidproxy6=$(ps x | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}'
 pidproxy7=$(ps x | grep "python.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy7 ]] && pid_kill $pidproxy7
 echo -e "\033[1;91m  $(fun_trans  "Socks DETENIDOS")"
 msg -bar
-rm -rf /etc/VPS-MX/PortPD.log
-echo "" > /etc/VPS-MX/PortPD.log
+rm -rf /etc/VPS/PortPD.log
+echo "" > /etc/VPS/PortPD.log
 exit 0
 }
 iniciarsocks () {
@@ -381,7 +381,7 @@ pidproxy5=$(ps x | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}') 
 pidproxy6=$(ps x | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy6 ]] && P6="\033[1;32m[ON]" || P6="\033[1;31m[OFF]"
 msg -bar 
 msg -tit
-msg -ama "   INSTALADOR DE PROXY'S VPS-MX By MOD @Kalix1"
+msg -ama "   INSTALADOR DE PROXY'S VPS By MOD @Kalix1"
 msg -bar
 echo -e "${cor[4]} [1] $(msg -verm2 "==>>") \033[1;97m$(fun_trans  "Proxy Python SIMPLE")\033[1;97m ------------- $P1"
 echo -e "${cor[4]} [2] $(msg -verm2 "==>>") \033[1;97m$(fun_trans  "Proxy Python SEGURO")\033[1;97m ------------- $P2"

@@ -3,7 +3,7 @@
 clear
 clear
 msg -bar
-SCPdir="/etc/VPS-MX" && [[ ! -d ${SCPdir} ]] && exit 1
+SCPdir="/etc/VPS" && [[ ! -d ${SCPdir} ]] && exit 1
 SCPfrm="${SCPdir}/herramientas" && [[ ! -d ${SCPfrm} ]] && exit
 SCPinst="${SCPdir}/protocolos" && [[ ! -d ${SCPinst} ]] && exit
 SCPidioma="${SCPdir}/idioma" && [[ ! -e ${SCPidioma} ]] && touch ${SCPidioma}
@@ -83,13 +83,13 @@ case $1 in
 esac
 }
 meu_ip () {
-if [[ -e /etc/VPS-MX/MEUIPvps ]]; then
-echo "$(cat /etc/VPS-MX/MEUIPvps)"
+if [[ -e /etc/VPS/MEUIPvps ]]; then
+echo "$(cat /etc/VPS/MEUIPvps)"
 else
 MEU_IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 MEU_IP2=$(wget -qO- ipv4.icanhazip.com)
 [[ "$MEU_IP" != "$MEU_IP2" ]] && echo "$MEU_IP2" || echo "$MEU_IP"
-echo "$MEU_IP" > /etc/VPS-MX/MEUIPvps
+echo "$MEU_IP" > /etc/VPS/MEUIPvps
 fi
 }
 IP="$(meu_ip)"
@@ -99,7 +99,7 @@ msg -bar3
 clear
 msg -bar
 msg -tit
-echo -e "\033[1;32m     INSTALADOR DE OPENVPN | VPS-MX By @Kalix1"
+echo -e "\033[1;32m     INSTALADOR DE OPENVPN | VPS By @Kalix1"
 msg -bar
 	# OpenVPN setup and first user creation
 echo -e "\033[1;97mSe necesitan ciertos parametros para configurar OpenVPN."
@@ -340,7 +340,7 @@ exit 0' > $RCLOCAL
 		IP=$PUBLICIP
 	fi
 	# 
-	echo "# OVPN_ACCESS_SERVER_PROFILE=VPS-MX
+	echo "# OVPN_ACCESS_SERVER_PROFILE=VPS
 client
 dev tun
 proto $PROTOCOL
@@ -421,7 +421,7 @@ wget -q -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add - 
 fi
 }
 coleta_variaveis () {
-echo -e "\033[1;32m     INSTALADOR DE OPENVPN | VPS-MX By @Kalix1"
+echo -e "\033[1;32m     INSTALADOR DE OPENVPN | VPS By @Kalix1"
 msg -bar
 msg -ne " Confirme su IP"; read -p ": " -e -i $IP ip
 msg -bar
@@ -602,7 +602,7 @@ read -p " Confirme el Puerto(Proxy) " -e -i 80 PPROXY
 teste_porta $PPROXY
 done
 cat > /etc/openvpn/client-common.txt <<EOF
-# OVPN_ACCESS_SERVER_PROFILE=VPS-MX
+# OVPN_ACCESS_SERVER_PROFILE=VPS
 client
 nobind
 dev tun

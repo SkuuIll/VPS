@@ -1,13 +1,13 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — SSL/Stunnel Installer
+# VPS — SSL/Stunnel Installer
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root
 
 # ── Instalar SSL/Stunnel ──
 install_ssl() {
-    ui_msg_green "INSTALADOR SSL By VPS-MX"
+    ui_msg_green "INSTALADOR SSL By VPS"
     ui_bar
 
     # ── Seleccionar puerto local de redirección ──
@@ -54,7 +54,7 @@ install_ssl() {
     # ── Generar certificado auto-firmado ──
     ui_step "Generando certificado SSL..."
     openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 \
-        -subj "/C=MX/ST=VPS/L=MX/O=VPS-MX/CN=$(get_ip)" \
+        -subj "/C=MX/ST=VPS/L=MX/O=VPS/CN=$(get_ip)" \
         -keyout /etc/stunnel/stunnel.key \
         -out /etc/stunnel/stunnel.crt 2>/dev/null
 
@@ -163,7 +163,7 @@ ssl_auto_config() {
     ui_step "Activando Python Direct en puerto 80..."
     ensure_package python3
     if [[ -f "${VPS_PROTO}/PDirect.py" ]]; then
-        screen -dmS pydic-80 python3 "${VPS_PROTO}/PDirect.py" 80 "VPS-MX" 2>/dev/null
+        screen -dmS pydic-80 python3 "${VPS_PROTO}/PDirect.py" 80 "VPS" 2>/dev/null
     fi
 
     # Instalar SSL 80 → 443
@@ -171,7 +171,7 @@ ssl_auto_config() {
     run_with_spinner "Instalando stunnel4..." "apt-get install -y stunnel4"
 
     openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 \
-        -subj "/C=MX/ST=VPS/L=MX/O=VPS-MX/CN=$(get_ip)" \
+        -subj "/C=MX/ST=VPS/L=MX/O=VPS/CN=$(get_ip)" \
         -keyout /etc/stunnel/stunnel.key \
         -out /etc/stunnel/stunnel.crt 2>/dev/null
 

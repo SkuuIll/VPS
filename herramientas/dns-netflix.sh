@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — DNS Netflix
+# VPS — DNS Netflix
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root

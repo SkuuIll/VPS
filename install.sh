@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Instalador Principal v2.0
+# VPS — Instalador Principal v2.0
 # ============================================================
 # Compatibilidad: Ubuntu 22.04 / 24.04
 # Uso: bash install.sh [--dry-run] [--force]
@@ -18,7 +18,7 @@ BWHITE='\033[1;37m'
 BMAGENTA='\033[1;35m'
 
 # ── Variables ──
-INSTALL_DIR="/etc/VPS-MX"
+INSTALL_DIR="/etc/VPS"
 SRC_DIR="$(cd "$(dirname "$0")" && pwd)"
 DRY_RUN=false
 FORCE=false
@@ -106,11 +106,11 @@ check_os() {
 
 check_existing() {
     if [[ -d "$INSTALL_DIR" && "$FORCE" != "true" ]]; then
-        msg_warn "VPS-MX ya está instalado en ${BWHITE}${INSTALL_DIR}${RST}"
+        msg_warn "VPS ya está instalado en ${BWHITE}${INSTALL_DIR}${RST}"
         echo -ne " ¿Reinstalar? Esto creará un backup [s/N]: "
         read -r answer
         if [[ "$answer" == @(s|S|y|Y) ]]; then
-            local backup_name="VPS-MX-backup-$(date +%Y%m%d_%H%M%S)"
+            local backup_name="VPS-backup-$(date +%Y%m%d_%H%M%S)"
             cp -r "$INSTALL_DIR" "/root/${backup_name}"
             msg_ok "Backup creado: ${BWHITE}/root/${backup_name}${RST}"
         else
@@ -249,7 +249,7 @@ create_command() {
     # Crear el comando principal: VPS
     cat > /usr/local/bin/VPS << 'SCRIPT'
 #!/bin/bash
-exec /etc/VPS-MX/menu "$@"
+exec /etc/VPS/menu "$@"
 SCRIPT
     chmod +x /usr/local/bin/VPS
 
@@ -257,7 +257,7 @@ SCRIPT
     ln -sf /usr/local/bin/VPS /usr/local/bin/vps 2>/dev/null || true
 
     # Limpiar comandos viejos
-    rm -f /usr/bin/vps-mx /usr/bin/VPS-MX /bin/VPS-MX /bin/menu 2>/dev/null || true
+    rm -f /usr/bin/vps /usr/bin/VPS /bin/VPS /bin/menu 2>/dev/null || true
 
     msg_ok "Comando creado: escribe ${BGREEN}VPS${RST} para entrar al panel"
 }
@@ -279,10 +279,10 @@ install_services() {
     fi
 
     # Monitor service
-    if [[ -f "${INSTALL_DIR}/services/vps-mx-monitor.service" ]]; then
-        cp -f "${INSTALL_DIR}/services/vps-mx-monitor.service" /etc/systemd/system/
+    if [[ -f "${INSTALL_DIR}/services/vps-monitor.service" ]]; then
+        cp -f "${INSTALL_DIR}/services/vps-monitor.service" /etc/systemd/system/
         systemctl daemon-reload 2>/dev/null || true
-        msg_ok "Servicio vps-mx-monitor instalado"
+        msg_ok "Servicio vps-monitor instalado"
     fi
 }
 
@@ -295,9 +295,9 @@ configure_sysctl() {
         return
     fi
 
-    local sysctl_file="/etc/sysctl.d/99-vps-mx.conf"
+    local sysctl_file="/etc/sysctl.d/99-vps.conf"
     cat > "$sysctl_file" << 'EOF'
-# VPS-MX: Deshabilitar IPv6
+# VPS: Deshabilitar IPv6
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1

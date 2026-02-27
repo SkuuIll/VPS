@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Funciones de Interfaz de Usuario
+# VPS — Funciones de Interfaz de Usuario
 # ============================================================
 # Uso: source este archivo desde lib/config.sh
 # Reemplaza todas las funciones msg, barras, selectores y
@@ -32,7 +32,7 @@ ui_bar2() {
     ui_bar "=" "$THEME_BAR"
 }
 
-# ── Título del panel VPS-MX ──
+# ── Título del panel VPS ──
 ui_title() {
     echo -e "${THEME_TITLE}"
     echo -e "  ██╗   ██╗██████╗ ███████╗    ███╗   ███╗██╗  ██╗"
@@ -105,7 +105,7 @@ run_with_spinner() {
     return $exit_code
 }
 
-# ── Progress bar clásica (estilo VPS-MX original mejorado) ──
+# ── Progress bar clásica (estilo VPS original mejorado) ──
 # Uso: run_with_bar "Configurando..." "command"
 run_with_bar() {
     local msg="$1"

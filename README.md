@@ -1,4 +1,4 @@
-# VPS-MX Panel v2.0
+# VPS Panel v2.0
 
 Panel de administracion VPS para tuneles, VPN y proxies.
 
@@ -47,7 +47,7 @@ menu             Menu principal (comando VPS)
 ## Desinstalar
 
 ```bash
-sudo bash /etc/VPS-MX/uninstall.sh
+sudo bash /etc/VPS/uninstall.sh
 ```
 
 ## Actualizar

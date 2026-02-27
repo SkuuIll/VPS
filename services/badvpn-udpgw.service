@@ -1,5 +1,5 @@
 [Unit]
-Description=BadVPN UDPGW - UDP Gateway para VPS-MX
+Description=BadVPN UDPGW - UDP Gateway para VPS
 Documentation=https://github.com/nicholasgasior/badvpn
 After=network.target
 

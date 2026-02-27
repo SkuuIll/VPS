@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — BadVPN UDPGW (Activador/Desactivador)
+# VPS — BadVPN UDPGW (Activador/Desactivador)
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root

@@ -1,26 +1,26 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX -- Backup y Restore Automatico
+# VPS -- Backup y Restore Automatico
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root
 
-BACKUP_DIR="/root/vps-mx-backups"
+BACKUP_DIR="/root/vps-backups"
 
 # -- Crear backup completo --
 create_backup() {
     mkdir -p "$BACKUP_DIR"
     local timestamp=$(date '+%Y%m%d_%H%M%S')
-    local backup_file="${BACKUP_DIR}/vps-mx-backup-${timestamp}.tar.gz"
+    local backup_file="${BACKUP_DIR}/vps-backup-${timestamp}.tar.gz"
 
     ui_step "Creando backup completo..."
     ui_bar
 
-    local tmp_dir="/tmp/vps-mx-backup-${timestamp}"
+    local tmp_dir="/tmp/vps-backup-${timestamp}"
     mkdir -p "$tmp_dir"
 
     # Panel completo
-    cp -r "$VPS_DIR" "${tmp_dir}/VPS-MX" 2>/dev/null
+    cp -r "$VPS_DIR" "${tmp_dir}/VPS" 2>/dev/null
 
     # Configs de servicios
     mkdir -p "${tmp_dir}/configs"
@@ -40,13 +40,13 @@ create_backup() {
     iptables-save > "${tmp_dir}/configs/iptables.rules" 2>/dev/null
 
     # sysctl custom
-    [[ -f /etc/sysctl.d/99-vps-mx.conf ]] && cp /etc/sysctl.d/99-vps-mx.conf "${tmp_dir}/configs/"
+    [[ -f /etc/sysctl.d/99-vps.conf ]] && cp /etc/sysctl.d/99-vps.conf "${tmp_dir}/configs/"
 
     # Lista de usuarios SSH
     grep '/bin/false\|/home' /etc/passwd > "${tmp_dir}/configs/users.list" 2>/dev/null
 
     # Crear tarball
-    tar -czf "$backup_file" -C /tmp "vps-mx-backup-${timestamp}" 2>/dev/null
+    tar -czf "$backup_file" -C /tmp "vps-backup-${timestamp}" 2>/dev/null
     rm -rf "$tmp_dir"
 
     local size=$(du -h "$backup_file" | awk '{print $1}')
@@ -81,8 +81,8 @@ list_backups() {
     done <<< "$(ls -t "$BACKUP_DIR"/*.tar.gz 2>/dev/null)"
 
     echo ""
-    echo "${i}" > /tmp/vps-mx-backup-count.tmp
-    printf '%s\n' "${files[@]}" > /tmp/vps-mx-backup-list.tmp
+    echo "${i}" > /tmp/vps-backup-count.tmp
+    printf '%s\n' "${files[@]}" > /tmp/vps-backup-list.tmp
     return 0
 }
 
@@ -93,12 +93,12 @@ restore_backup() {
     fi
 
     ui_bar
-    local count=$(cat /tmp/vps-mx-backup-count.tmp)
+    local count=$(cat /tmp/vps-backup-count.tmp)
     local sel
     sel=$(ui_input "Seleccione backup a restaurar (1-${count})" "^[0-9]+$")
 
-    local file=$(sed -n "${sel}p" /tmp/vps-mx-backup-list.tmp)
-    rm -f /tmp/vps-mx-backup-count.tmp /tmp/vps-mx-backup-list.tmp
+    local file=$(sed -n "${sel}p" /tmp/vps-backup-list.tmp)
+    rm -f /tmp/vps-backup-count.tmp /tmp/vps-backup-list.tmp
 
     if [[ ! -f "$file" ]]; then
         ui_error "Backup no encontrado"
@@ -111,15 +111,15 @@ restore_backup() {
     fi
 
     ui_step "Restaurando backup..."
-    local tmp_dir="/tmp/vps-mx-restore-$$"
+    local tmp_dir="/tmp/vps-restore-$$"
     mkdir -p "$tmp_dir"
     tar -xzf "$file" -C "$tmp_dir" 2>/dev/null
 
     local extracted=$(ls "$tmp_dir")
 
     # Restaurar panel
-    if [[ -d "${tmp_dir}/${extracted}/VPS-MX" ]]; then
-        cp -rf "${tmp_dir}/${extracted}/VPS-MX/"* "$VPS_DIR/" 2>/dev/null
+    if [[ -d "${tmp_dir}/${extracted}/VPS" ]]; then
+        cp -rf "${tmp_dir}/${extracted}/VPS/"* "$VPS_DIR/" 2>/dev/null
         ui_success "Panel restaurado"
     fi
 

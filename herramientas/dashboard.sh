@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX -- Dashboard de Estadisticas
+# VPS -- Dashboard de Estadisticas
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root

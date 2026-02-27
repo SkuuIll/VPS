@@ -4,7 +4,7 @@ clear
 clear
 # DIRECCIONES DE CARPETAS Y ARCHIVOS 
 
-SCPdir="/etc/VPS-MX" && [[ ! -d ${SCPdir} ]] && exit 1
+SCPdir="/etc/VPS" && [[ ! -d ${SCPdir} ]] && exit 1
 SCPusr="${SCPdir}/controlador" && [[ ! -d ${SCPusr} ]] && mkdir ${SCPusr}
 SCPfrm="${SCPdir}/herramientas" && [[ ! -d ${SCPfrm} ]] && mkdir ${SCPfrm}
 SCPinst="${SCPdir}/protocolos" && [[ ! -d ${SCPfrm} ]] && mkdir ${SCPfrm}
@@ -33,7 +33,7 @@ USRdatacredi="/etc/BOT-C2/creditos"
 clear
 msg -bar
 msg -tit
-msg -ama "      ## BOT DE GESTION | VPS-MX By @Kalix1 ## \033[1;31m"
+msg -ama "      ## BOT DE GESTION | VPS By @Kalix1 ## \033[1;31m"
 msg -bar
 if [[ $1 = "id" || -z $(ps aux |grep -v grep |grep -w "ADMbot.sh"|grep dmS|awk '{print $2}') ]]; then
 [[ -z $2 ]] && echo -ne "\033[1;96m #Digite el Token del BOT\033[0;92m\nTOKEN: \033[0;97m" && read TOKEN || TOKEN="$2"
@@ -56,7 +56,7 @@ msg -bar
 exit 0
 fi
 LINE='━━━━━━━━━━━━━━━━━━━━'
-USRdatabase="/etc/VPS-MX/VPS-MXuser"
+USRdatabase="/etc/VPS/VPSuser"
 #IMPORTANDO API
 source ShellBot.sh
 ShellBot.init --token "$TOKEN"
@@ -165,13 +165,13 @@ done
 }
 # DEFINE UM IP
 meu_ip () {
-if [[ -e /etc/VPS-MX/MEUIPvps ]]; then
-echo "$(cat /etc/VPS-MX/MEUIPvps)"
+if [[ -e /etc/VPS/MEUIPvps ]]; then
+echo "$(cat /etc/VPS/MEUIPvps)"
 else
 MEU_IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 MEU_IP2=$(wget -qO- ipv4.icanhazip.com)
 [[ "$MEU_IP" != "$MEU_IP2" ]] && echo "$MEU_IP2" || echo "$MEU_IP"
-echo "$MEU_IP" > /etc/VPS-MX/MEUIPvps
+echo "$MEU_IP" > /etc/VPS/MEUIPvps
 fi
 }
 # USUARIO BLOCK
@@ -287,7 +287,7 @@ echo "${SSH2}"|bc > /etc/BOT-A/SSH20.log
 SSH3="$(less /etc/BOT-A/SSH20.log)"
 SSH4="$(echo $SSH3)"
 #ONLINES
-ONLINES="$(less /etc/VPS-MX/USRonlines)"
+ONLINES="$(less /etc/VPS/USRonlines)"
 ##DEMOS REGISTRADOS
 demo=`cd /etc/BOT-TEMP && ls | wc -l`
 cd
@@ -298,7 +298,7 @@ demo3="$(less /etc/BOT-A/SSH-DEMO.log)"
 demor="$(echo $demo3)"
 
 local bot_retorno="*$LINE*\n"
-         bot_retorno+="*🔰 MANAGER VPS-MX 2.0 🔰*\n"
+         bot_retorno+="*🔰 MANAGER VPS 2.0 🔰*\n"
          bot_retorno+="$LINE\n"
 		 bot_retorno+="_▪️ SSH REGISTRADAS:_ ( *$SSH4* )\n"	
          bot_retorno+="_▪️ CONECTADOS:_ ( *$ONLINES* )\n"
@@ -375,7 +375,7 @@ fi
 return 0
 }
 online_fun () {
-MyTIME="${SCPusr}/time-vps-mx"
+MyTIME="${SCPusr}/time-vps"
 [[ -e ${MyTIME} ]] && source ${MyTIME} || touch ${MyTIME}
 local bot_retorno="$LINE\n"
          bot_retorno+="$* Monitor de Usuarios* \n"
@@ -988,7 +988,7 @@ return 0
 
 [[ -z $1 ]] && error_fun && return 0
 cup1="$1"
-userva="$(cat /etc/VPS-MX/VPS-MXuser|grep -w "$cup1"|cut -d'|' -f1)"
+userva="$(cat /etc/VPS/VPSuser|grep -w "$cup1"|cut -d'|' -f1)"
 
 [[ -z $userva ]] && error_fun && return 0
 
@@ -1005,9 +1005,9 @@ chage -E $valid $1 2> /dev/null || return 1
    done 
    }
   
-NOM=`less /etc/VPS-MX/controlador/nombre.log` > /dev/null 2>&1
+NOM=`less /etc/VPS/controlador/nombre.log` > /dev/null 2>&1
 NOM1=`echo $NOM` > /dev/null 2>&1
-IP="$(cat /etc/VPS-MX/MEUIPvps)"
+IP="$(cat /etc/VPS/MEUIPvps)"
   
    local bot_retorno="*$LINE*\n"
           bot_retorno+="*CUENTA RENOVADA* \n"
@@ -1046,16 +1046,16 @@ return 0
 
 VPSsec=$(date +%s)
 
-sen=$(cat /etc/VPS-MX/VPS-MXuser|grep -w "$1"|cut -d '|' -f2)
+sen=$(cat /etc/VPS/VPSuser|grep -w "$1"|cut -d '|' -f2)
              [[ -z $sen ]] && sen="???"
-             DateExp="$(cat /etc/VPS-MX/VPS-MXuser|grep -w "$1"|cut -d'|' -f3)"
+             DateExp="$(cat /etc/VPS/VPSuser|grep -w "$1"|cut -d'|' -f3)"
              if [[ ! -z $DateExp ]]; then             
              DataSec=$(date +%s --date="$DateExp")
              [[ "$VPSsec" -gt "$DataSec" ]] && EXPTIME="${red}[EXPIRADA]" || EXPTIME="${gren}[$(($(($DataSec - $VPSsec)) / 86400))]"
              else
              EXPTIME="???"
              fi
-             limit=$(cat /etc/VPS-MX/VPS-MXuser|grep -w "$1"|cut -d '|' -f4)
+             limit=$(cat /etc/VPS/VPSuser|grep -w "$1"|cut -d '|' -f4)
              [[ -z $limit ]] && limit="???"
 			 
 local bot_retorno="*$LINE*\n"
@@ -1125,13 +1125,13 @@ return 0
 }
 
 [[ -z $1 ]] && error_fun && return 0
-local USRloked="/etc/VPS-MX/VPS-MX-userlock"
+local USRloked="/etc/VPS/VPS-userlock"
 local LIMITERLOG="${USRdatabase}/Limiter.log"
 local LIMITERLOG2="${USRdatabase}/Limiter2.log"
 if [[ $2 = "-loked" ]]; then 
 [[ $(cat ${USRloked}|grep -w "$1") ]] && return 1
 echo " $1 (BLOCK-MULTILOGIN) $(date +%r--%d/%m/%y)"
-limseg="$(less /etc/VPS-MX/controlador/tiemdes.log)"
+limseg="$(less /etc/VPS/controlador/tiemdes.log)"
 KEY="862633455:AAGJ9BBJanzV6yYwLSemNAZAVwn7EyjrtcY"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 MSG="⚠️ AVISO DE VPS: $NOM1 ⚠️
@@ -1200,7 +1200,7 @@ fi
 
 userblock_lee () {
 
-local HOST="/etc/VPS-MX/VPS-MX-userlock"
+local HOST="/etc/VPS/VPS-userlock"
 local RETURN=$(cat $HOST)
 if [[ -z $RETURN ]]; then
 local bot_retorno="$LINE\n"

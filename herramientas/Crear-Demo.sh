@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Crear Usuario Temporal por Minutos
+# VPS — Crear Usuario Temporal por Minutos
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root
@@ -38,7 +38,7 @@ main() {
     echo "${name}:${pass}" | chpasswd 2>/dev/null
 
     # ── Crear cleanup script ──
-    local cleanup_script="/tmp/vps-mx-tmpuser-${name}.sh"
+    local cleanup_script="/tmp/vps-tmpuser-${name}.sh"
     cat > "$cleanup_script" << CLEANUP
 #!/bin/bash
 sleep $(( minutes * 60 ))

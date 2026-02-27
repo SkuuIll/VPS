@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Funciones de Sistema
+# VPS — Funciones de Sistema
 # ============================================================
 # Uso: source este archivo desde lib/config.sh
 # Reemplaza funciones duplicadas: meu_ip, fun_ip, mportas,

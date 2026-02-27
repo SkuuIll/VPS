@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Sistema de Colores y Temas Centralizado
+# VPS — Sistema de Colores y Temas Centralizado
 # ============================================================
 # Uso: source este archivo desde lib/config.sh
 # Provee variables de color ANSI y funciones de colorización.
@@ -62,7 +62,7 @@ export STATUS_OK="${BGREEN}[OK]${RST}"
 export STATUS_FAIL="${BRED}[FAIL]${RST}"
 export STATUS_WARN="${BYELLOW}[!]${RST}"
 
-# ── Tema del panel (personalizable en /etc/VPS-MX/theme.conf) ──
+# ── Tema del panel (personalizable en /etc/VPS/theme.conf) ──
 # Colores por defecto para los elementos de la UI
 export THEME_TITLE="${BCYAN}"
 export THEME_HEADER="${BYELLOW}"
@@ -79,7 +79,7 @@ export THEME_ACCENT="${BMAGENTA}"
 
 # ── Cargar tema personalizado si existe ──
 _vps_load_theme() {
-    local theme_file="${VPS_DIR:-/etc/VPS-MX}/theme.conf"
+    local theme_file="${VPS_DIR:-/etc/VPS}/theme.conf"
     if [[ -f "$theme_file" ]]; then
         # El archivo theme.conf puede contener líneas como:
         # THEME_TITLE='\033[1;91m'

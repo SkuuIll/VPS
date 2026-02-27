@@ -346,7 +346,7 @@ View_User_info(){
 	clear 
 	echo -e " Usuario [{user_name}] Informacion de Cuenta:"
 msg -bar
-    echo -e " PANEL VPS-MX By @Kalix1"
+    echo -e " PANEL VPS By @Kalix1"
 	
 	echo -e " IP : ${Green_font_prefix}${ip}${Font_color_suffix}"
 
@@ -387,8 +387,8 @@ Set_config_user(){
 msg -bar
 	echo -ne "\e[92m 1) Ingrese un nombre al usuario que desea Configurar\n (No repetir, o se marcara incorrectamente!)\n"
 msg -bar
-	stty erase '^H' && read -p "(Predeterminado: VPS-MX):" ssr_user
-	[[ -z "${ssr_user}" ]] && ssr_user="VPS-MX"
+	stty erase '^H' && read -p "(Predeterminado: VPS):" ssr_user
+	[[ -z "${ssr_user}" ]] && ssr_user="VPS"
 	echo && echo -e "	Nombre de usuario : ${Green_font_prefix}${ssr_user}${Font_color_suffix}" && echo
 }
 Set_config_port(){
@@ -416,8 +416,8 @@ Set_config_password(){
 msg -bar
 	echo -e "\e[92m 3) Por favor ingrese una contrasena para el Usuario"
 msg -bar
-	stty erase '^H' && read -p "(Predeterminado: VPS-MX):" ssr_password
-	[[ -z "${ssr_password}" ]] && ssr_password="VPS-MX"
+	stty erase '^H' && read -p "(Predeterminado: VPS):" ssr_password
+	[[ -z "${ssr_password}" ]] && ssr_password="VPS"
 	echo && echo -e "	contrasena : ${Green_font_prefix}${ssr_password}${Font_color_suffix}" && echo
 }
 Set_config_method(){
@@ -1974,7 +1974,7 @@ msg -bar
 	if [[ -e ${ssr_folder} ]]; then
 		check_pid
 		if [[ ! -z "${PID}" ]]; then
-			echo -e "         VPS-MX By @Kalix1\n Estado actual: ${Green_font_prefix}Instalado${Font_color_suffix} y ${Green_font_prefix}Iniciado${Font_color_suffix}"
+			echo -e "         VPS By @Kalix1\n Estado actual: ${Green_font_prefix}Instalado${Font_color_suffix} y ${Green_font_prefix}Iniciado${Font_color_suffix}"
 		else
 			echo -e " Estado actual: ${Green_font_prefix}Instalado${Font_color_suffix} pero ${Red_font_prefix}no comenzo${Font_color_suffix}"
 		fi

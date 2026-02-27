@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX -- Limitador de Ancho de Banda por Usuario
+# VPS -- Limitador de Ancho de Banda por Usuario
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root

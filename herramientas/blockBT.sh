@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Firewall / Bloqueo BitTorrent
+# VPS — Firewall / Bloqueo BitTorrent
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root

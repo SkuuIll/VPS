@@ -1,13 +1,13 @@
 #!/bin/bash
 # ============================================================
-# VPS-MX — Optimizadores Básicos
+# VPS — Optimizadores Básicos
 # ============================================================
 source "$(dirname "$(readlink -f "$0")")/../lib/config.sh"
 check_root
 
 # ── TCP Speed ──
 toggle_tcp_speed() {
-    local marker="#VPS-MX-TCP"
+    local marker="#VPS-TCP"
 
     if grep -q "^${marker}" /etc/sysctl.conf 2>/dev/null; then
         # Desactivar
@@ -134,7 +134,7 @@ reset_iptables() {
 
 # ── Status indicators ──
 get_tcp_status() {
-    grep -q "^#VPS-MX-TCP" /etc/sysctl.conf 2>/dev/null && echo -e "${STATUS_ON}" || echo -e "${STATUS_OFF}"
+    grep -q "^#VPS-TCP" /etc/sysctl.conf 2>/dev/null && echo -e "${STATUS_ON}" || echo -e "${STATUS_OFF}"
 }
 
 get_squid_cache_status() {
