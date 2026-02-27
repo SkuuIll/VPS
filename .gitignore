@@ -1,0 +1,10 @@
+*.log
+*.bak
+*.tmp
+backups/
+bandwidth/
+expires/
+demo-ssh/
+MEUIPvps
+theme.conf
+vps-mx.log

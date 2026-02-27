@@ -1,0 +1,12 @@
+[Unit]
+Description=VPS-MX Monitor de Servicios
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/etc/VPS-MX/menu monitorservi
+Restart=always
+RestartSec=120
+
+[Install]
+WantedBy=multi-user.target

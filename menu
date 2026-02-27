@@ -1,0 +1,386 @@
+#!/bin/bash
+# ============================================================
+# VPS-MX -- Menu Principal v2.0
+# ============================================================
+# Comando: VPS
+# ============================================================
+
+# -- Cargar librerias --
+VPS_LIB_PATH="$(dirname "$(readlink -f "$0")")/lib"
+[[ ! -d "$VPS_LIB_PATH" ]] && VPS_LIB_PATH="/etc/VPS-MX/lib"
+source "${VPS_LIB_PATH}/config.sh"
+
+check_root
+disable_ipv6
+[[ ! -d "$VPS_DIR" ]] && { ui_error "VPS-MX no esta instalado correctamente"; exit 1; }
+
+# ================================
+# SUBCOMANDOS (background)
+# ================================
+if [[ "${1:-}" == "monitorservi" ]]; then
+    while true; do
+        [[ -x /bin/monitor.sh ]] && /bin/monitor.sh 2>/dev/null
+        sleep 120
+    done
+    exit 0
+fi
+
+if [[ "${1:-}" == "moni2" ]]; then
+    while true; do
+        kill_by_name "PDirect.py" 2>/dev/null
+        kill_by_name "python.py" 2>/dev/null
+        sleep 21600
+    done
+    exit 0
+fi
+
+if [[ "${1:-}" == "expire-check" ]]; then
+    [[ -f "${VPS_TOOLS}/expiracion.sh" ]] && "${VPS_TOOLS}/expiracion.sh" --auto
+    exit 0
+fi
+
+# ================================
+# FUNCIONES AUXILIARES
+# ================================
+
+autorun_status() {
+    [[ -f /etc/bash.bashrc-bakup ]] && echo -e "${BGREEN}ON${RST}" || echo -e "${BRED}OFF${RST}"
+}
+
+toggle_autorun() {
+    if [[ -f /etc/bash.bashrc-bakup ]]; then
+        mv -f /etc/bash.bashrc-bakup /etc/bash.bashrc
+        sed -i '\|/etc/VPS-MX/menu|d' /etc/bash.bashrc
+        ui_success "Auto-inicio removido"
+    elif [[ -f /etc/bash.bashrc ]]; then
+        cp /etc/bash.bashrc /etc/bash.bashrc-bakup
+        echo '/etc/VPS-MX/menu' >> /etc/bash.bashrc
+        ui_success "Auto-inicio activado"
+    fi
+    ui_bar
+}
+
+show_credits() {
+    ui_clear
+    ui_bar
+    ui_title
+    echo -e "${BYELLOW}              VERSION & CREDITOS${RST}"
+    ui_bar
+    echo -e "  ${BWHITE}Version:${RST}  ${BGREEN}${VPS_VERSION} (${VPS_CODENAME})${RST}"
+    echo -e "  ${BWHITE}Soporte:${RST}  Ubuntu 22.04 / 24.04"
+    ui_bar
+    echo -e "  ${BCYAN}Cambios v2.0:${RST}"
+    echo -e "  ${BGREEN}+${RST} Arquitectura modular con librerias compartidas"
+    echo -e "  ${BGREEN}+${RST} Instalador moderno con soporte systemd"
+    echo -e "  ${BGREEN}+${RST} Dashboard con estadisticas en tiempo real"
+    echo -e "  ${BGREEN}+${RST} Monitor de usuarios conectados"
+    echo -e "  ${BGREEN}+${RST} Backup/Restore automatico del servidor"
+    echo -e "  ${BGREEN}+${RST} Limitador de ancho de banda por usuario"
+    echo -e "  ${BGREEN}+${RST} Generador de configs para apps de clientes"
+    echo -e "  ${BGREEN}+${RST} Sistema de expiracion de cuentas"
+    echo -e "  ${BGREEN}+${RST} Comando simplificado: ${BGREEN}VPS${RST}"
+    echo -e "  ${BGREEN}+${RST} Servicios con auto-reinicio (systemd)"
+    ui_bar
+}
+
+update_script() {
+    ui_clear
+    ui_bar
+    ui_title_small
+    echo -e "${THEME_HEADER}        ACTUALIZAR VPS-MX${RST}"
+    ui_bar
+    ui_info "Para actualizar:"
+    echo -e "  ${BWHITE}1.${RST} Descarga la ultima version"
+    echo -e "  ${BWHITE}2.${RST} Ejecuta: ${BGREEN}sudo bash install.sh --force${RST}"
+    ui_bar
+}
+
+remove_script() {
+    ui_clear
+    ui_bar
+    ui_title_small
+    echo -e "${BRED}      DESINSTALAR VPS-MX${RST}"
+    ui_bar
+    if ui_confirm "Confirmar desinstalacion?" "n"; then
+        if [[ -f "${VPS_BASE}/uninstall.sh" ]]; then
+            bash "${VPS_BASE}/uninstall.sh"
+        else
+            rm -rf "${VPS_DIR}" 2>/dev/null
+            rm -f /usr/local/bin/VPS /usr/local/bin/vps 2>/dev/null
+        fi
+        exit 0
+    fi
+}
+
+show_htop() {
+    ensure_package htop
+    ui_pause "Enter para iniciar htop..."
+    sudo htop
+}
+
+change_colors() {
+    ui_clear
+    ui_bar
+    ui_title_small
+    echo -e "${THEME_HEADER}        PERSONALIZAR TEMA${RST}"
+    ui_bar
+
+    ui_menu_item 1 "Cian (predeterminado)"
+    ui_menu_item 2 "Rojo"
+    ui_menu_item 3 "Verde"
+    ui_menu_item 4 "Amarillo"
+    ui_menu_item 5 "Magenta"
+    ui_bar
+    ui_menu_back 0
+    ui_bar
+
+    local sel
+    sel=$(ui_select 5)
+    local tf="${VPS_DIR}/theme.conf"
+
+    case "$sel" in
+        1) echo -e "THEME_TITLE=\033[1;36m\nTHEME_HEADER=\033[1;33m\nTHEME_MENU_NUM=\033[1;32m\nTHEME_MENU_ARROW=\033[1;31m" > "$tf" ;;
+        2) echo -e "THEME_TITLE=\033[1;31m\nTHEME_HEADER=\033[1;91m\nTHEME_MENU_NUM=\033[1;33m\nTHEME_MENU_ARROW=\033[1;37m" > "$tf" ;;
+        3) echo -e "THEME_TITLE=\033[1;32m\nTHEME_HEADER=\033[1;92m\nTHEME_MENU_NUM=\033[1;36m\nTHEME_MENU_ARROW=\033[1;33m" > "$tf" ;;
+        4) echo -e "THEME_TITLE=\033[1;33m\nTHEME_HEADER=\033[1;93m\nTHEME_MENU_NUM=\033[1;32m\nTHEME_MENU_ARROW=\033[1;31m" > "$tf" ;;
+        5) echo -e "THEME_TITLE=\033[1;35m\nTHEME_HEADER=\033[1;95m\nTHEME_MENU_NUM=\033[1;36m\nTHEME_MENU_ARROW=\033[1;33m" > "$tf" ;;
+        0) return ;;
+    esac
+    ui_success "Tema aplicado. Reinicia para ver cambios."
+    ui_bar
+}
+
+# ================================
+# SUB-MENUS
+# ================================
+
+menu_protocolos() {
+    ui_clear
+    ui_bar
+    ui_title_small
+    echo -e "${THEME_HEADER}              INSTALADORES DE PROTOCOLOS${RST}"
+    ui_bar
+
+    local scripts=() num=0
+    local proto_list=(
+        "dropbear.sh|DROPBEAR SSH|dropbear"
+        "ssl.sh|SSL / STUNNEL|stunnel4"
+        "squid.sh|SQUID PROXY|squid"
+        "openvpn.sh|OPENVPN|openvpn"
+        "v2ray.sh|V2RAY|v2ray"
+        "shadowsocks.sh|SHADOWSOCKS|ssserver"
+        "Shadowsocks-libev.sh|SHADOWSOCKS LIBEV|ss-server"
+        "Shadowsocks-R.sh|SHADOWSOCKS-R|shadowsocks-r"
+        "sockspy.sh|SOCKS PYTHON|python3"
+        "budp.sh|BADVPN UDPGW|badvpn-udpgw"
+    )
+
+    for entry in "${proto_list[@]}"; do
+        IFS='|' read -r script name svc <<< "$entry"
+        if [[ -f "${VPS_PROTO}/${script}" ]]; then
+            (( num++ ))
+            scripts+=("$script")
+            ui_menu_item "$num" "$name" "$(service_status "$svc")"
+        fi
+    done
+
+    ui_bar
+    ui_menu_back 0
+    ui_bar
+
+    local sel
+    sel=$(ui_select "$num")
+    [[ "$sel" -eq 0 ]] && return
+    local chosen="${scripts[$((sel-1))]}"
+    [[ -f "${VPS_PROTO}/${chosen}" ]] && "${VPS_PROTO}/${chosen}"
+}
+
+menu_herramientas() {
+    ui_clear
+    ui_bar
+    ui_title_small
+    echo -e "${THEME_HEADER}               HERRAMIENTAS Y EXTRAS${RST}"
+    ui_bar
+
+    local num=0 scripts=()
+
+    ui_menu_section "SEGURIDAD"
+    (( num++ )); scripts+=("blockBT.sh");    ui_menu_item "$num" "Firewall / Bloqueo BitTorrent"
+    (( num++ )); scripts+=("fai2ban.sh");    ui_menu_item "$num" "Fail2Ban Proteccion"
+    (( num++ )); scripts+=("squidpass.sh");  ui_menu_item "$num" "Autenticacion Proxy Squid"
+    (( num++ )); scripts+=("bandwidth.sh");  ui_menu_item "$num" "Limitador de Ancho de Banda"
+
+    ui_menu_section "AJUSTES"
+    (( num++ )); scripts+=("tcp.sh");        ui_menu_item "$num" "Aceleracion TCP (BBR/Plus)"
+    (( num++ )); scripts+=("dns-netflix.sh");ui_menu_item "$num" "DNS Netflix / Streaming"
+    (( num++ )); scripts+=("ports.sh");      ui_menu_item "$num" "Administrar Puertos Activos"
+    (( num++ )); scripts+=("gestor.sh");     ui_menu_item "$num" "Gestion VPS (pass/host/hora)"
+
+    ui_menu_section "OPTIMIZADORES"
+    (( num++ )); scripts+=("utils.sh");      ui_menu_item "$num" "Limpiar Cache / RAM / Paquetes"
+
+    ui_menu_section "EXTRAS"
+    (( num++ )); scripts+=("paysnd.sh");     ui_menu_item "$num" "Payload Fuerza Bruta"
+    (( num++ )); scripts+=("speed.py");      ui_menu_item "$num" "Prueba de Velocidad"
+
+    ui_bar
+    ui_menu_back 0
+    ui_bar
+
+    local sel
+    sel=$(ui_select "$num")
+    [[ "$sel" -eq 0 ]] && return
+
+    local chosen="${scripts[$((sel-1))]}"
+    case "$chosen" in
+        *.py) python3 "${VPS_TOOLS}/${chosen}" 2>/dev/null || python "${VPS_TOOLS}/${chosen}" ;;
+        *)    [[ -f "${VPS_TOOLS}/${chosen}" ]] && "${VPS_TOOLS}/${chosen}" || ui_warn "No encontrado: ${chosen}" ;;
+    esac
+}
+
+show_ports() {
+    ui_clear
+    ui_bar
+    ui_title_small
+    echo -e "${THEME_HEADER}          PUERTOS ACTIVOS${RST}"
+    ui_bar
+
+    echo -e "  ${BWHITE}CPU:${RST} $(nproc) nucleos  ${BWHITE}RAM:${RST} $(get_sysinfo ram_percent)  ${BWHITE}IP:${RST} $(get_ip)"
+    ui_bar
+
+    local -A port_groups
+    while read -r svc port; do
+        [[ -z "$svc" || -z "$port" ]] && continue
+        local key
+        case "$svc" in
+            squid|squid3)        key="SQUID" ;;
+            apache|apache2)      key="APACHE" ;;
+            ssh|sshd)            key="SSH" ;;
+            dropbear)            key="DROPBEAR" ;;
+            ssserver|ss-server)  key="SHADOWSOCKS" ;;
+            openvpn)             key="OPENVPN" ;;
+            stunnel4|stunnel)    key="SSL" ;;
+            python|python3)      key="SOCKS/PYTHON" ;;
+            v2ray)               key="V2RAY" ;;
+            badvpn*)             key="BADVPN" ;;
+            *)                   key="${svc^^}" ;;
+        esac
+        port_groups["$key"]+=" $port"
+    done <<< "$(get_ports)"
+
+    for svc_name in "${!port_groups[@]}"; do
+        printf "  ${BRED}%-15s${RST} ${BGREEN}%s${RST}\n" "${svc_name}:" "${port_groups[$svc_name]}"
+    done
+
+    ui_bar
+    ui_pause
+}
+
+show_system_info() {
+    ui_clear
+    ui_bar
+    ui_title_small
+    echo -e "${THEME_HEADER}            DETALLES DEL SISTEMA${RST}"
+    ui_bar
+    echo -e "  ${BYELLOW}Sistema:${RST}       $(get_os)"
+    echo -e "  ${BYELLOW}Procesador:${RST}    $(get_sysinfo cpu_model) x$(nproc)"
+    echo -e "  ${BYELLOW}Uso CPU:${RST}       $(get_sysinfo cpu_usage)"
+    echo -e "  ${BYELLOW}RAM:${RST}           $(get_sysinfo ram_used) / $(get_sysinfo ram_total) ($(get_sysinfo ram_percent))"
+    echo -e "  ${BYELLOW}Uptime:${RST}        $(get_sysinfo uptime)"
+    echo -e "  ${BYELLOW}Hostname:${RST}      $(hostname)"
+    echo -e "  ${BYELLOW}IP Publica:${RST}    $(get_ip)"
+    echo -e "  ${BYELLOW}IP Local:${RST}      $(get_local_ip)"
+    echo -e "  ${BYELLOW}Kernel:${RST}        $(uname -r)"
+    echo -e "  ${BYELLOW}Arquitectura:${RST}  $(uname -m)"
+    ui_bar
+    ui_pause
+}
+
+# ================================
+# MENU PRINCIPAL
+# ================================
+
+main_menu() {
+    while true; do
+        ui_clear
+        ui_bar
+        ui_title
+
+        # -- Dashboard compacto --
+        local ip=$(get_ip)
+        local os_name=$(get_os | awk '{print $1, $2}')
+        local ram_pct=$(get_sysinfo ram_percent)
+        local ssh_reg=$(( $(count_ssh_users) - 2 ))
+        (( ssh_reg < 0 )) && ssh_reg=0
+        local connected=$(who 2>/dev/null | wc -l)
+
+        echo -e "  ${BWHITE}IP:${RST} ${BCYAN}${ip}${RST}    ${BWHITE}OS:${RST} ${BCYAN}${os_name}${RST}    ${BWHITE}RAM:${RST} ${BGREEN}${ram_pct}${RST}"
+        echo -e "  ${BWHITE}Usuarios:${RST} ${BGREEN}${ssh_reg}${RST} reg  ${BWHITE}Conectados:${RST} ${BGREEN}${connected}${RST}  ${BWHITE}BadVPN:${RST} $(service_status badvpn-udpgw)"
+        ui_bar
+
+        # -- Cuentas --
+        ui_menu_section "CUENTAS"
+        ui_menu_item 1  "Administrar Cuentas SSH/SSL/Dropbear"
+        ui_menu_item 2  "Administrar Cuentas SS/SSRR"
+        ui_menu_item 3  "Administrar Cuentas V2RAY"
+        ui_menu_item 4  "Expiracion de Cuentas"
+
+        # -- Servidor --
+        ui_menu_section "SERVIDOR"
+        ui_menu_item 5  "Instaladores de Protocolos"
+        ui_menu_item 6  "Puertos Activos"
+        ui_menu_item 7  "Herramientas y Extras"
+
+        # -- Nuevas funciones --
+        ui_menu_section "AVANZADO"
+        ui_menu_item 8  "Dashboard de Estadisticas"
+        ui_menu_item 9  "Monitor de Usuarios"
+        ui_menu_item 10 "Backup / Restore"
+        ui_menu_item 11 "Generador de Configs"
+        ui_menu_item 12 "Limitador de Banda"
+
+        # -- Sistema --
+        ui_menu_section "SISTEMA"
+        ui_menu_item 13 "Info del Sistema"
+        ui_menu_item 14 "Monitor Procesos (htop)"
+        ui_menu_item 15 "Personalizar Tema"
+        printf " ${THEME_MENU_NUM}[16]${RST} ${THEME_MENU_ARROW}▸${RST} ${BWHITE}Auto-Inicio${RST}                              $(autorun_status)\n"
+
+        ui_bar
+        printf " ${BGREEN}[17]${RST} ${THEME_MENU_ARROW}▸${RST} ${BGREEN}ACTUALIZAR${RST}"
+        printf "         ${BRED}[18]${RST} ${THEME_MENU_ARROW}▸${RST} ${BRED}DESINSTALAR${RST}\n"
+        printf " ${BWHITE}[19]${RST} ${THEME_MENU_ARROW}▸${RST} ${BWHITE}CREDITOS${RST}"
+        printf "           ${BWHITE}[ 0]${RST} ${THEME_MENU_ARROW}▸${RST} ${BG_RED}${BWHITE} SALIR ${RST}\n"
+        ui_bar
+
+        local sel
+        sel=$(ui_select 19)
+
+        case "$sel" in
+            1)  [[ -f "${VPS_USERCODES}" ]] && "${VPS_USERCODES}" "${VPS_LANG}" ;;
+            2)  [[ -f "${VPS_PROTO}/C-SSR.sh" ]] && "${VPS_PROTO}/C-SSR.sh" ;;
+            3)  [[ -f "${VPS_PROTO}/v2ray.sh" ]] && "${VPS_PROTO}/v2ray.sh" ;;
+            4)  [[ -f "${VPS_TOOLS}/expiracion.sh" ]] && "${VPS_TOOLS}/expiracion.sh" ;;
+            5)  menu_protocolos ;;
+            6)  show_ports ;;
+            7)  menu_herramientas ;;
+            8)  [[ -f "${VPS_TOOLS}/dashboard.sh" ]] && "${VPS_TOOLS}/dashboard.sh" ;;
+            9)  [[ -f "${VPS_TOOLS}/monitor.sh" ]] && "${VPS_TOOLS}/monitor.sh" ;;
+            10) [[ -f "${VPS_TOOLS}/backup.sh" ]] && "${VPS_TOOLS}/backup.sh" ;;
+            11) [[ -f "${VPS_TOOLS}/configgen.sh" ]] && "${VPS_TOOLS}/configgen.sh" ;;
+            12) [[ -f "${VPS_TOOLS}/bandwidth.sh" ]] && "${VPS_TOOLS}/bandwidth.sh" ;;
+            13) show_system_info ;;
+            14) show_htop ;;
+            15) change_colors ;;
+            16) toggle_autorun ;;
+            17) update_script ;;
+            18) remove_script ;;
+            19) show_credits ;;
+            0)  ui_clear; exit 0 ;;
+        esac
+
+        ui_pause
+    done
+}
+
+main_menu
