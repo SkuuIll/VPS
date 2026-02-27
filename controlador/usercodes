@@ -5,17 +5,17 @@ clear
 msg -bar
 myip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0' | head -n1`;
 myint=`ifconfig | grep -B1 "inet addr:$myip" | head -n1 | awk '{print $1}'`;
-NOM=`less /etc/VPS-MX/controlador/nombre.log` > /dev/null 2>&1
+NOM=`less /etc/VPS/controlador/nombre.log` > /dev/null 2>&1
 NOM1=`echo $NOM` > /dev/null 2>&1
-IDB=`less /etc/VPS-MX/controlador/IDT.log` > /dev/null 2>&1
+IDB=`less /etc/VPS/controlador/IDT.log` > /dev/null 2>&1
 IDB1=`echo $IDB` > /dev/null 2>&1
 declare -A TIMEUS 
-SCPdir="/etc/VPS-MX"
+SCPdir="/etc/VPS"
 SCPdir2="${SCPdir}/herramientas"
 SCPusr="${SCPdir}/controlador"
-MyPID="${SCPusr}/pid-vps-mx"
-MyTIME="${SCPusr}/time-vps-mx"
-USRdatabase="${SCPdir}/VPS-MXuser"
+MyPID="${SCPusr}/pid-vps"
+MyTIME="${SCPusr}/time-vps"
+USRdatabase="${SCPdir}/VPSuser"
 VERY="$(ps aux|grep "${SCPusr}/usercodes verificar"| grep -v grep)"
 VERY2="$(ps aux|grep "${SCPusr}/usercodes desbloqueo"| grep -v grep)"
 dirapache="/usr/local/lib/ubuntn/apache/ver" && [[ ! -d ${dirapache} ]] && exit
@@ -99,14 +99,14 @@ kill "$userpid" 2>/dev/null
 userdel $user
 echo -e "\033[1;32mUSUARIO:\033[1;33m $user \033[1;31mEliminado"
 done
-rm -rf ${SCPdir}/VPS-MXuser
+rm -rf ${SCPdir}/VPSuser
 service sshd restart &>/dev/null
 service ssh restart &>/dev/null
 service dropbear start &>/dev/null
 service stunnel4 start &>/dev/null
 service squid restart &>/dev/null
-rm -rf ${SCPdir}/VPS-MX-userlock &>/dev/null
-rm -rf /etc/VPS-MX/controlador/Limiter.log &>/dev/null
+rm -rf ${SCPdir}/VPS-userlock &>/dev/null
+rm -rf /etc/VPS/controlador/Limiter.log &>/dev/null
 unlockall2
 msg -bar
 msg -ne " Enter Para Continuar" && read enter
@@ -125,8 +125,8 @@ echo ""
 echo -e "\033[1;91m ## Cancelar Precione CTRL+C"
 msg -bar
 read -p "        ►► Presione enter para continuar ◄◄"
-rm -rf /etc/VPS-MX/VPS-MX-userlock
-rm -rf /etc/VPS-MX/controlador/Limiter.log
+rm -rf /etc/VPS/VPS-userlock
+rm -rf /etc/VPS/controlador/Limiter.log
 unlockall2
 msg -bar
 echo -e "\033[1;92m           ¡¡CONTADORES REINICIADOS!!"
@@ -188,13 +188,13 @@ done
 }
 
 block_userfun () {
-local USRloked="/etc/VPS-MX/VPS-MX-userlock"
+local USRloked="/etc/VPS/VPS-userlock"
 local LIMITERLOG="${USRdatabase}/Limiter.log"
 local LIMITERLOG2="${USRdatabase}/Limiter2.log"
 if [[ $2 = "-loked" ]]; then 
 [[ $(cat ${USRloked}|grep -w "$1") ]] && return 1
 echo " $1 (BLOCK-MULTILOGIN) $(date +%r--%d/%m/%y)"
-limseg="$(less /etc/VPS-MX/controlador/tiemdes.log)"
+limseg="$(less /etc/VPS/controlador/tiemdes.log)"
 KEY="862633455:AAGJ9BBJanzV6yYwLSemNAZAVwn7EyjrtcY"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 MSG="⚠️ AVISO DE VPS: $NOM1 ⚠️
@@ -245,7 +245,7 @@ block_user () {
 clear
 clear
 msg -bar
-local USRloked="/etc/VPS-MX/VPS-MX-userlock"
+local USRloked="/etc/VPS/VPS-userlock"
 [[ ! -e ${USRloked} ]] && touch ${USRloked}
 usuarios_ativos=($(mostrar_usuarios))
 if [[ -z ${usuarios_ativos[@]} ]]; then
@@ -312,7 +312,7 @@ useradd -M -s /bin/false $1 -e ${valid} > /dev/null 2>&1 || return 1
    echo "$1|$2|${datexp}|$4" > ${USRdatabase}
    for value in `echo ${newbase}`; do
    echo $value >> ${USRdatabase}
-   echo $value >> ${SCPdir}/B-VPS-MXuser/VPS-MXuser-"$Fecha"
+   echo $value >> ${SCPdir}/B-VPSuser/VPSuser-"$Fecha"
    done
    } || echo "$1|$2|${datexp}|$4" > ${USRdatabase}
 }
@@ -543,8 +543,8 @@ done
      msg -ne "$(fun_trans "  >> Limite de Conexion"): " && echo -e "$limiteuser"
 msg -bar
 diasuser2="$(echo "$diasuser"|bc)+1"
-echo "${diasuser2}"|bc > /etc/VPS-MX/controlador/DIAS.log
-diasuser3="$(less /etc/VPS-MX/controlador/DIAS.log)"
+echo "${diasuser2}"|bc > /etc/VPS/controlador/DIAS.log
+diasuser3="$(less /etc/VPS/controlador/DIAS.log)"
 add_user "${nomeuser}" "${senhauser}" "${diasuser3}" "${limiteuser}" && msg -ama "$(fun_trans "            Usuario Creado con Exito")" || msg -verm "$(fun_trans "         Error, Usuario no creado")"
 [[ $(dpkg --get-selections|grep -w "openvpn"|head -1) ]] && [[ -e /etc/openvpn/openvpn-status.log ]] && newclient "$nomeuser" "$senhauser"
 msg -bar
@@ -604,8 +604,8 @@ kill -9 $droplim &>/dev/null
 # droplim=`droppids|grep -w "$usuario_del"|cut -d'|' -f2` 
 # kill -9 $droplim &>/dev/null
 rm_user "$usuario_del" && msg -verd " [$(fun_trans "Removido")]" || msg -verm " [$(fun_trans "No Removido")]"
-rm -rf /etc/VPS-MX/VPS-MX-userlock
-rm -rf /etc/VPS-MX/controlador/Limiter.log
+rm -rf /etc/VPS/VPS-userlock
+rm -rf /etc/VPS/controlador/Limiter.log
 unlockall2
 msg -bar
 msg -ne " Enter Para Continuar" && read enter
@@ -910,8 +910,8 @@ else
 echo -e "${yellow}$usr $valid"
 fi
 done <<< "$(mostrar_usuarios)"
-rm -rf /etc/VPS-MX/VPS-MX-userlock
-rm -rf /etc/VPS-MX/controlador/Limiter.log
+rm -rf /etc/VPS/VPS-userlock
+rm -rf /etc/VPS/controlador/Limiter.log
 unlockall2
 msg -bar
 msg -ne " Enter Para Continuar" && read enter
@@ -992,11 +992,11 @@ curl -s --max-time 10 -d "chat_id=$IDB1&disable_web_page_preview=1&text=$MSG" $U
            continue
            fi
            echo -e "\033[1;33m OK! \033[1;31m${conexao[$user]} CONEXIONESS"
-		   BLOQUEADO="$(wc -l /etc/VPS-MX/VPS-MX-userlock | awk '{print $1}')"
-		   #BLOQUEADO="$(grep -c BLOCK-MULTILOGIN /etc/VPS-MX/controlador/Limiter.log)"
+		   BLOQUEADO="$(wc -l /etc/VPS/VPS-userlock | awk '{print $1}')"
+		   #BLOQUEADO="$(grep -c BLOCK-MULTILOGIN /etc/VPS/controlador/Limiter.log)"
 		   BLOQUEADO2="$(echo ${BLOQUEADO}|bc)0"
 		   BLOQUEADO3="/10"
-		   EXPIRADO="$(grep -c EXPIRADO /etc/VPS-MX/controlador/Limiter.log)"
+		   EXPIRADO="$(grep -c EXPIRADO /etc/VPS/controlador/Limiter.log)"
 		   EXPIRADO2="$(echo ${EXPIRADO}|bc)0"
 		   EXPIRADO3="/10"
     done <<< "$(mostrar_usuarios)"
@@ -1004,7 +1004,7 @@ curl -s --max-time 10 -d "chat_id=$IDB1&disable_web_page_preview=1&text=$MSG" $U
     #echo "${EXPIRED}0"|bc > ${SCPdir}/USRexpired
 	echo "${EXPIRADO2}${EXPIRADO3}"|bc > ${SCPdir}/USRexpired
 	echo "${BLOQUEADO2}${BLOQUEADO3}"|bc > ${SCPdir}/USRbloqueados
-	limseg="$(less /etc/VPS-MX/controlador/tiemlim.log)"
+	limseg="$(less /etc/VPS/controlador/tiemlim.log)"
 	
 	sleep $limseg # TEMPO DE ESPERA DO LOOP
     clear
@@ -1027,10 +1027,10 @@ tput cuu1 && tput dl1
 done
 case ${selection} in
 1)
-cp ${USRdatabase} $HOME/VPS-MX-Backup
+cp ${USRdatabase} $HOME/VPS-Backup
 msg -azu "$(fun_trans "Procedimiento Hecho con Exito, Guardado en:")"
 echo ""
-echo -e "\033[1;31mBACKUP > [\033[1;32m$HOME/VPS-MX-Backup\033[1;31m]"
+echo -e "\033[1;31mBACKUP > [\033[1;32m$HOME/VPS-Backup\033[1;31m]"
 echo ""
 ;;
 2)
@@ -1038,12 +1038,12 @@ while [[ ! -e ${dirbackup} ]]; do
 echo -ne "\033[1;37m ¡¡Recomiendo DESACTIVAR Limitador si es que lo tine ACTIVO!!\n"
 echo -ne "\033[1;37m Escriba la ubicacion de la copia de seguridad\n" 
 msg -bar
-echo -ne "\033[1;37m ENTER: para ruta predeterminada /root/VPS-MX-Backup: " && read dirbackup
+echo -ne "\033[1;37m ENTER: para ruta predeterminada /root/VPS-Backup: " && read dirbackup
 echo ""
 echo "----------  RESTAURANDO CUENTAS ESPERE "
 echo ""
 msg -bar
-[[ -z "${dirbackup}" ]] && dirbackup="/root/VPS-MX-Backup"
+[[ -z "${dirbackup}" ]] && dirbackup="/root/VPS-Backup"
 tput cuu1 && tput dl1
 done
 VPSsec=$(date +%s)
@@ -1083,7 +1083,7 @@ if [[ -z $PIDVRF ]]; then
 msg -bar
 echo -ne "\033[1;96m   ¿Cada cuantos segundos ejecutar el limitador?\n\033[1;97m  +Segundos = -Uso de CPU | -Segundos = +Uso de CPU\033[0;92m \n                Predeterminado:\033[1;37m 120s\n     Cuantos Segundos (Numeros Unicamente): " && read tiemlim   
 [[ -z "$tiemlim" ]] && tiemlim="120"
-echo "${tiemlim}" > /etc/VPS-MX/controlador/tiemlim.log
+echo "${tiemlim}" > /etc/VPS/controlador/tiemlim.log
 cd ${SCPusr}
 screen -dmS very ${SCPusr}/usercodes verificar
 else
@@ -1117,7 +1117,7 @@ if [[ -z $PIDVRF2 ]]; then
 msg -bar
 echo -ne "\033[1;96m   ¿Cada cuantos segundos ejecutar el desbloqueador?\n\033[1;97m  +Segundos = -Uso de CPU | -Segundos = +Uso de CPU\033[0;92m \n                Predeterminado:\033[1;37m 300s\n     Cuantos Segundos (Numeros Unicamente): " && read tiemdes   
 [[ -z "$tiemdes" ]] && tiemdes="300"
-echo "${tiemdes}" > /etc/VPS-MX/controlador/tiemdes.log
+echo "${tiemdes}" > /etc/VPS/controlador/tiemdes.log
 cd ${SCPusr} 
 screen -dmS very2 ${SCPusr}/usercodes desbloqueo
 else
@@ -1138,7 +1138,7 @@ baner_fun () {
 banner_on () {
 clear 
 clear 
-local="/etc/VPS-MX/bannerssh"
+local="/etc/VPS/bannerssh"
 rm -rf $local  > /dev/null 2>&1
 local2="/etc/dropbear/banner"
 chk=$(cat /etc/ssh/sshd_config | grep Banner)
@@ -1146,8 +1146,8 @@ if [ "$(echo "$chk" | grep -v "#Banner" | grep Banner)" != "" ]; then
 local=$(echo "$chk" |grep -v "#Banner" | grep Banner | awk '{print $2}')
  else
 echo "" >> /etc/ssh/sshd_config
-echo "Banner /etc/VPS-MX/bannerssh" >> /etc/ssh/sshd_config
-local="/etc/VPS-MX/bannerssh"
+echo "Banner /etc/VPS/bannerssh" >> /etc/ssh/sshd_config
+local="/etc/VPS/bannerssh"
 fi
 msg -bar
 msg -tit
@@ -1156,7 +1156,7 @@ msg -bar
 msg -ne "$(fun_trans  "Inserte el BANNER de preferencia en HTML sin saltos"): \n\n" && read ban_ner
 echo ""
 msg -bar
-credi="$(less /etc/VPS-MX/message.txt)"
+credi="$(less /etc/VPS/message.txt)"
 echo "$ban_ner" >> $local
 echo '<p style="text-align: center;"><span style="color: #0000ff;"><strong>'$credi'</strong></span><br /><em><span style="color: #ff0000;"><strong>SCRIPT - VPS&bull;MX</strong></span></em></p>' >> $local
 if [[ -e "$local2" ]]; then
@@ -1217,7 +1217,7 @@ ${SCPusr}/usercodes
 desbloqueo_auto () {
 while true; do
 Desbloqueo.sh 2>/dev/null
-tiemdes="$(less /etc/VPS-MX/controlador/tiemdes.log)"
+tiemdes="$(less /etc/VPS/controlador/tiemdes.log)"
 sleep $tiemdes
     done
 }
@@ -1229,7 +1229,7 @@ msg -bar
 msg -tit
 echo -e "\033[1;32m  REGISTRO TOTAL DE CUENTAS VIEJAS Y NUEVAS"
 msg -bar
-cat /etc/VPS-MX/VPS-MXuser
+cat /etc/VPS/VPSuser
 msg -bar
 msg -ne " Enter Para Continuar" && read enter
 ${SCPusr}/usercodes
@@ -1284,7 +1284,7 @@ ${SCPusr}/usercodes
 clear 
 clear
 msg -bar
-sed -i -e 's/^[ \t]*//; s/[ \t]*$//; /^$/d' /etc/VPS-MX/controlador/Limiter2.log
+sed -i -e 's/^[ \t]*//; s/[ \t]*$//; /^$/d' /etc/VPS/controlador/Limiter2.log
 [[ -e "${SCPusr}/Limiter2.log" ]] && {
 msg -tit
 msg -ama "              REGISTRO DEL LIMITADOR "
