@@ -35,18 +35,18 @@ ui_bar2() {
 # ── Título del panel VPS ──
 ui_title() {
     echo -e "${THEME_TITLE}"
-    echo -e "  ██╗   ██╗██████╗ ███████╗    ███╗   ███╗██╗  ██╗"
-    echo -e "  ██║   ██║██╔══██╗██╔════╝    ████╗ ████║╚██╗██╔╝"
-    echo -e "  ██║   ██║██████╔╝███████╗    ██╔████╔██║ ╚███╔╝ "
-    echo -e "  ╚██╗ ██╔╝██╔═══╝ ╚════██║    ██║╚██╔╝██║ ██╔██╗ "
-    echo -e "   ╚████╔╝ ██║     ███████║    ██║ ╚═╝ ██║██╔╝ ██╗"
-    echo -e "    ╚═══╝  ╚═╝     ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝"
+    echo -e "  ██╗   ██╗██████╗ ███████╗"
+    echo -e "  ██║   ██║██╔══██╗██╔════╝"
+    echo -e "  ██║   ██║██████╔╝███████╗"
+    echo -e "  ╚██╗ ██╔╝██╔═══╝ ╚════██║"
+    echo -e "   ╚████╔╝ ██║     ███████║"
+    echo -e "    ╚═══╝  ╚═╝     ╚══════╝"
     echo -e "${RST}"
 }
 
 # ── Título compacto (una línea) ──
 ui_title_small() {
-    echo -e "${THEME_TITLE}  ━━━ VPS•MX Panel ━━━${RST}"
+    echo -e "${THEME_TITLE}  ━━━ VPS Panel ━━━${RST}"
 }
 
 # ── Header de sección ──
@@ -160,23 +160,22 @@ ui_menu_section() {
 }
 
 # ── Seleccionar una opción numérica ──
-# Uso: selection=$(ui_select $max_num)
+# Uso: ui_select 19; case $REPLY in ...
+# También funciona: sel=$(ui_select 19) pero con read directo
 ui_select() {
     local max="$1"
-    local selection=""
-    local valid=false
+    REPLY=""
 
-    while [[ "$valid" != "true" ]]; do
-        echo -ne "${THEME_INPUT} ► Seleccione una opción: ${RST}"
-        read -r selection
-        tput cuu1 && tput dl1
+    while true; do
+        echo -ne "${THEME_INPUT} ► Seleccione [0-${max}]: ${RST}" > /dev/tty
+        read -r REPLY < /dev/tty
 
         # Validar que es un número entre 0 y max
-        if [[ "$selection" =~ ^[0-9]+$ ]] && (( selection >= 0 && selection <= max )); then
-            valid=true
+        if [[ "$REPLY" =~ ^[0-9]+$ ]] && (( REPLY >= 0 && REPLY <= max )); then
+            break
         fi
     done
-    echo "$selection"
+    echo "$REPLY"
 }
 
 # ── Confirmación S/N ──
