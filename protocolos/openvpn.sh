@@ -180,16 +180,16 @@ msg -bar
 		apt-get update
 		apt-get install openvpn iptables openssl ca-certificates -y
 	else
-		# 
 		yum install epel-release -y
 		yum install openvpn iptables openssl ca-certificates -y
 	fi
+
 	# Get easy-rsa
-	EASYRSAURL='https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.8/EasyRSA-3.0.8.tgz'
+	EASYRSAURL='https://github.com/OpenVPN/easy-rsa/releases/download/v3.1.2/EasyRSA-3.1.2.tgz'
 	wget -O ~/easyrsa.tgz "$EASYRSAURL" 2>/dev/null || curl -Lo ~/easyrsa.tgz "$EASYRSAURL"
 	tar xzf ~/easyrsa.tgz -C ~/
-	mv ~/EasyRSA-3.0.8/ /etc/openvpn/
-	mv /etc/openvpn/EasyRSA-3.0.8/ /etc/openvpn/easy-rsa/
+	mv ~/EasyRSA-3.1.2/ /etc/openvpn/
+	mv /etc/openvpn/EasyRSA-3.1.2/ /etc/openvpn/easy-rsa/
 	chown -R root:root /etc/openvpn/easy-rsa/
 	rm -f ~/easyrsa.tgz
 	cd /etc/openvpn/easy-rsa/
@@ -265,8 +265,8 @@ persist-tun
 status openvpn-status.log
 verb 3
 crl-verify crl.pem" >> /etc/openvpn/server.conf
-updatedb
-PLUGIN=$(locate openvpn-plugin-auth-pam.so | head -1)
+
+PLUGIN=$(find /usr/lib -name "openvpn-plugin-auth-pam.so" 2>/dev/null | head -1)
 [[ ! -z $(echo ${PLUGIN}) ]] && {
 echo "client-to-client
 client-cert-not-required
@@ -561,8 +561,8 @@ port $PORT
 dev tun
 status openvpn-status.log
 EOF
-updatedb
-PLUGIN=$(locate openvpn-plugin-auth-pam.so | head -1)
+
+PLUGIN=$(find /usr/lib -name "openvpn-plugin-auth-pam.so" 2>/dev/null | head -1)
 [[ ! -z $(echo ${PLUGIN}) ]] && {
 echo "client-to-client
 client-cert-not-required

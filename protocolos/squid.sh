@@ -7,7 +7,7 @@ clear
 SCPdir="/etc/VPS"
 SCPfrm="${SCPdir}/herramientas" && [[ ! -d ${SCPfrm} ]] && exit
 SCPinst="${SCPdir}/protocolos"&& [[ ! -d ${SCPinst} ]] && exit
-dirapache="/usr/local/lib/ubuntn/apache/ver" && [[ ! -d ${dirapache} ]] && exit
+
 #LISTA PORTAS
 mportas () {
 unset portas
@@ -80,7 +80,7 @@ fun_squid  () {
   echo -e "\033[1;32m $(fun_trans "REMOVIENDO SQUID")"
   msg -bar
   service squid stop > /dev/null 2>&1
-  fun_bar "apt-get remove squid3 -y"
+  fun_bar "apt-get remove squid -y"
   msg -bar
   echo -e "\033[1;32m $(fun_trans "Procedimento Concluido")"
   msg -bar
@@ -116,7 +116,7 @@ unset PORT
 msg -bar
 echo -e " $(fun_trans  "INSTALANDO SQUID")"
 msg -bar
-fun_bar "apt-get install squid3 -y"
+fun_bar "apt-get install squid -y"
 
 msg -bar
 echo -e " $(fun_trans  "INICIANDO CONFIGURACION")"
@@ -268,10 +268,8 @@ touch /etc/opendns
 fun_eth
 msg -bar
 echo -ne " \033[1;31m [ ! ] \033[1;33m$(fun_trans  "    REINICIANDO SERVICIOS")"
-squid3 -k reconfigure > /dev/null 2>&1
 squid -k reconfigure > /dev/null 2>&1
 service ssh restart > /dev/null 2>&1
-service squid3 restart > /dev/null 2>&1
 service squid restart > /dev/null 2>&1
 echo -e " \033[1;32m[OK]"
 msg -bar
@@ -321,8 +319,8 @@ msg -bar
 cat $payload | awk -F "/" '{print $1,$2,$3,$4}'
 msg -bar
 if [[ ! -f "/etc/init.d/squid" ]]; then
-service squid3 reload
-service squid3 restart
+service squid reload
+service squid restart
 else
 /etc/init.d/squid reload
 service squid restart
@@ -350,15 +348,11 @@ msg -bar
 cat $payload | awk -F "/" '{print $1,$2,$3,$4}'
 msg -bar
 if [[ ! -f "/etc/init.d/squid" ]]; then
-service squid3 reload
-service squid3 restart
 service squid reload
 service squid restart
 else
 /etc/init.d/squid reload
 service squid restart
-/etc/init.d/squid3 reload
-service squid3 restart
 fi	
 return 0
 elif [[ "$varpay" = "3" ]]; then

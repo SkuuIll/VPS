@@ -29,6 +29,7 @@ err_fun () {
 }
 intallv2ray () {
 apt install python3-pip -y 
+export PIP_BREAK_SYSTEM_PACKAGES=1
 source <(curl -sL https://multi.netlify.app/v2ray.sh)
 ## Correccion Mail
 mailfix=$(cat /dev/urandom | tr -dc '[:alnum:]' | head -c 10)
@@ -52,7 +53,7 @@ msg -bar
 msg -ne "Enter Para Continuar" && read enter
 ${SCPinst}/v2ray.sh
 }
-dirapache="/usr/local/lib/ubuntn/apache/ver" && [[ ! -d ${dirapache} ]] && exit
+
 tls () {
 msg -ama "$(fun_trans "Activar o Desactivar TLS")!"
 msg -bar
@@ -78,6 +79,7 @@ msg -ne "Enter Para Continuar" && read enter
 ${SCPinst}/v2ray.sh
 }
 unistallv2 () {
+export PIP_BREAK_SYSTEM_PACKAGES=1
 source <(curl -sL https://multi.netlify.app/v2ray.sh) --remove > /dev/null 2>&1
 rm -rf /etc/VPS/RegV2ray > /dev/null 2>&1
 echo -e "\033[1;92m                  V2RAY REMOVIDO OK "

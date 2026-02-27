@@ -208,7 +208,7 @@ cat <<EOF
  [5] - DELETE     [6] - HEAD     [7] - PATCH   [8] - POST
 EOF
 msg -bar
-# Coletando Requisição
+# Coletando RequisiÃ§Ã£o
 while [[ ! ${req} ]]; do
     read -p " => " valor3
     case $valor3 in
