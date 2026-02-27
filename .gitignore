@@ -8,3 +8,5 @@ demo-ssh/
 MEUIPvps
 theme.conf
 vps.log
+__pycache__/
+*.pyc
