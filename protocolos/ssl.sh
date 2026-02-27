@@ -161,10 +161,30 @@ ssl_auto_config() {
 
     # Instalar Python proxy en puerto 80
     ui_step "Activando Python Direct en puerto 80..."
-    ensure_package python3
-    if [[ -f "${VPS_PROTO}/PDirect.py" ]]; then
-        screen -dmS pydic-80 python3 "${VPS_PROTO}/PDirect.py" 80 "VPS" 2>/dev/null
+    
+    if [[ ! -f "/etc/VPS/protocolos/proxy3.py" ]]; then
+        ui_error "Requiere inicializar Socks Python 3 primero (Opción Menú: SOCKS PYTHON)."
+        return 1
     fi
+
+    cat > "/etc/systemd/system/sockspy-80.service" << EOF
+[Unit]
+Description=Socks Python Proxy (Port 80)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python3 /etc/VPS/protocolos/proxy3.py 80 22 "200_Connection_Established"
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    systemctl daemon-reload
+    systemctl enable sockspy-80 >/dev/null 2>&1
+    systemctl start sockspy-80
 
     # Instalar SSL 80 → 443
     ui_step "Configurando SSL 80 → 443..."

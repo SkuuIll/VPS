@@ -17,17 +17,30 @@ is_badvpn_running() {
 # ── Instalar binario si no existe ──
 ensure_binary() {
     if [[ ! -f "$BADVPN_BIN" ]]; then
-        ui_step "Descargando badvpn-udpgw..."
-        local arch=$(uname -m)
-        # Intentar compilar o descargar según arquitectura
+        ui_step "Compilando badvpn-udpgw..."
         if has_command apt-get; then
-            apt-get install -y cmake build-essential &>/dev/null || true
+            apt-get update -q
+            apt-get install -y cmake build-essential git &>/dev/null || true
         fi
-        # Fallback: descargar binario precompilado
-        download_file "https://github.com/nicholasgasior/badvpn/releases/latest/download/badvpn-udpgw" "$BADVPN_BIN" || {
-            ui_error "No se pudo descargar badvpn-udpgw"
+        
+        rm -rf /tmp/badvpn_build
+        git clone https://github.com/ambrop72/badvpn.git /tmp/badvpn_build &>/dev/null
+        mkdir -p /tmp/badvpn_build/build
+        cd /tmp/badvpn_build/build || return 1
+        cmake .. -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1 &>/dev/null
+        make install &>/dev/null
+        
+        if [[ -f /usr/local/bin/badvpn-udpgw ]]; then
+            cp /usr/local/bin/badvpn-udpgw "$BADVPN_BIN"
+        fi
+        
+        cd - &>/dev/null
+        rm -rf /tmp/badvpn_build
+        
+        if [[ ! -f "$BADVPN_BIN" ]]; then
+            ui_error "No se pudo compilar badvpn-udpgw"
             return 1
-        }
+        fi
         chmod 755 "$BADVPN_BIN"
     fi
 }
