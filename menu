@@ -173,6 +173,7 @@ menu_protocolos() {
         "Shadowsocks-R.sh|SHADOWSOCKS-R|shadowsocks-r"
         "sockspy.sh|SOCKS PYTHON|python3"
         "budp.sh|BADVPN UDPGW|badvpn-udpgw"
+        "udpcustom.sh|UDP CUSTOM|udp-custom"
     )
 
     for entry in "${proto_list[@]}"; do

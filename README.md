@@ -29,7 +29,7 @@ menu
 - **Backup/Restore** - Exportar e importar toda la config
 - **Limitador de banda** - Control por usuario con tc
 - **Generador de configs** - HTTP Injector, OpenVPN, V2Ray, SSH/SSL
-- **Protocolos** - Dropbear, Stunnel, Squid, OpenVPN, V2Ray, Shadowsocks, BadVPN
+- **Protocolos** - Dropbear, Stunnel, Squid, OpenVPN, V2Ray, Shadowsocks, BadVPN, UDP Custom
 - **Herramientas** - Firewall, Fail2Ban, DNS, TCP Speed, puertos, limpieza
 
 ## Compatibilidad
