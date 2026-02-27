@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import httplib
@@ -21,10 +21,10 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
 
     def handle_error(self, request, client_address):
         
-        print >>sys.stderr, '-'*40
-        print >>sys.stderr, 'Exception happened during processing of request from', client_address
+        print('-'*40, file=sys.stderr)
+        print('Exception happened during processing of request from', client_address, file=sys.stderr)
         traceback.print_exc()
-        print >>sys.stderr, '-'*40
+        print('-'*40, file=sys.stderr)
         
      
 class ThreadingHTTPServer6(ThreadingHTTPServer):
@@ -304,7 +304,7 @@ def test(HandlerClass=SimpleHTTPProxyHandler, ServerClass=ThreadingHTTPServer, p
     httpd = ServerClass(server_address, HandlerClass)
 
     sa = httpd.socket.getsockname()
-    print "Serving HTTP on", sa[0], "port", sa[1], "..."
+    print("Serving HTTP on", sa[0], "port", sa[1], "...")
     httpd.serve_forever()
 
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+source "$(dirname "$(readlink -f "$0")")/../lib/config.sh" 2>/dev/null || source "/etc/VPS/lib/config.sh" 2>/dev/null || true
 #27/01/2021
 declare -A cor=( [0]="\033[1;37m" [1]="\033[1;34m" [2]="\033[1;31m" [3]="\033[1;33m" [4]="\033[1;32m" )
 pid_fail=$(dpkg -l | grep fail2ban | grep ii)

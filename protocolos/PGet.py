@@ -32,7 +32,7 @@ class Logger:
 
     def log(self, log):
         with Logger.logLock:
-            print log
+            print(log)
 
 		
 
@@ -612,11 +612,11 @@ class Server(threading.Thread):
 
 
 def print_usage():
-    print '\nUsage  : python get.py -b listening -p pass'
-    print 'Ex.    : python get.py -b 0.0.0.0:80 -p pass123'
-    print '       : python get.py -b 0.0.0.0:80 -p passFile.pwd\n'
-    print '___Password file ex.:___'
-    print PasswordSet.FILE_EXEMPLE
+    print('\nUsage  : python get.py -b listening -p pass')
+    print('Ex.    : python get.py -b 0.0.0.0:80 -p pass123')
+    print('       : python get.py -b 0.0.0.0:80 -p passFile.pwd\n')
+    print('___Password file ex.:___')
+    print(PasswordSet.FILE_EXEMPLE)
 
 def parse_args(argv):
     global CONFIG_LISTENING
@@ -637,8 +637,8 @@ def parse_args(argv):
             CONFIG_PASS = arg
 
 def main():
-    print '\n-->GetTunnelPy - Server v.' + '25/06/2017' + '\n'
-    print '-->Listening: ' + CONFIG_LISTENING
+    print('\n-->GetTunnelPy - Server v.' + '25/06/2017' + '\n')
+    print('-->Listening: ' + CONFIG_LISTENING)
 
     pwdSet = None
 
@@ -649,21 +649,21 @@ def main():
             try:
                 isValidFile = pwdSet.parseFile(CONFIG_PASS)
             except IOError as e:
-                print '--#Error reading file: ' + str(type(e)) + ' - ' + str(e)
+                print('--#Error reading file: ' + str(type(e)) + ' - ' + str(e))
                 sys.exit()
 
             if not isValidFile:
-                print '--#Error on parsing file!\n'
+                print('--#Error on parsing file!\n')
                 print_usage()
                 return
 
-            print '-->Pass file: ' + CONFIG_PASS + '\n'
+            print('-->Pass file: ' + CONFIG_PASS + '\n')
         else:
             if (len(CONFIG_PASS) > 0):
-                print '-->Pass     : yes\n'
+                print('-->Pass     : yes\n')
                 pwdSet = PasswordSet(CONFIG_PASS)
             else:
-                print '-->Pass     : no\n'
+                print('-->Pass     : no\n')
 
     server = Server(CONFIG_LISTENING)
     server.passwdSet = pwdSet
@@ -673,7 +673,7 @@ def main():
         try:
             time.sleep(2)
         except KeyboardInterrupt:
-            print '<-> Stopping server...'
+            print('<-> Stopping server...')
             server.running = False
             break
 

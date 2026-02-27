@@ -1,4 +1,5 @@
 #!/bin/bash
+source "$(dirname "$(readlink -f "$0")")/../lib/config.sh" 2>/dev/null || source "/etc/VPS/lib/config.sh" 2>/dev/null || true
 #19/12/2019
 clear
 clear
