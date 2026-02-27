@@ -2,16 +2,22 @@
 
 Panel de administracion VPS para tuneles, VPN y proxies.
 
-## Instalar (un solo comando)
+## Instalar
 
 ```bash
-git clone https://github.com/SkuuIll/VPS.git && cd VPS && sudo bash install.sh
+apt update; apt upgrade -y; wget https://raw.githubusercontent.com/SkuuIll/VPS/main/instalar && chmod +x instalar && ./instalar
 ```
 
-Despues de instalar, usa:
+Despues de instalar:
 
 ```bash
-sudo VPS
+VPS
+```
+
+o
+
+```bash
+menu
 ```
 
 ## Funciones
@@ -41,7 +47,7 @@ protocolos/      Instaladores de protocolos
 controlador/     Base de datos de usuarios
 install.sh       Instalador
 uninstall.sh     Desinstalador
-menu             Menu principal (comando VPS)
+menu             Menu principal
 ```
 
 ## Desinstalar

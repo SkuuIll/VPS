@@ -1,0 +1,92 @@
+#!/bin/bash
+# ============================================================
+# VPS Panel - Instalador Rapido
+# ============================================================
+# Un solo comando para instalar:
+# apt update; apt upgrade -y; wget https://raw.githubusercontent.com/SkuuIll/VPS/main/instalar && chmod +x instalar && ./instalar
+# ============================================================
+set -euo pipefail
+
+RST='\033[0m'
+BRED='\033[1;31m'
+BGREEN='\033[1;32m'
+BYELLOW='\033[1;33m'
+BCYAN='\033[1;36m'
+BWHITE='\033[1;37m'
+
+REPO="https://github.com/SkuuIll/VPS.git"
+INSTALL_DIR="/etc/VPS"
+CLONE_DIR="/root/VPS"
+
+clear
+echo ""
+echo -e "${BCYAN}"
+echo -e "  ██╗   ██╗██████╗ ███████╗"
+echo -e "  ██║   ██║██╔══██╗██╔════╝"
+echo -e "  ██║   ██║██████╔╝███████╗"
+echo -e "  ╚██╗ ██╔╝██╔═══╝ ╚════██║"
+echo -e "   ╚████╔╝ ██║     ███████║"
+echo -e "    ╚═══╝  ╚═╝     ╚══════╝"
+echo -e "${RST}"
+echo -e "${BYELLOW}  ━━━━ INSTALADOR RAPIDO v2.0 ━━━━${RST}"
+echo ""
+
+# Verificar root
+if [[ $EUID -ne 0 ]]; then
+    echo -e " ${BRED}Error: Ejecutar como root${RST}"
+    echo -e " ${BWHITE}sudo bash instalar${RST}"
+    exit 1
+fi
+
+# Verificar Ubuntu 22/24
+if [[ -f /etc/os-release ]]; then
+    source /etc/os-release
+    echo -e " ${BGREEN}✔${RST} Sistema: ${BCYAN}${PRETTY_NAME}${RST}"
+    if [[ "$ID" == "ubuntu" ]]; then
+        ver="${VERSION_ID%%.*}"
+        if (( ver < 22 )); then
+            echo -e " ${BRED}✘${RST} Ubuntu ${VERSION_ID} no soportado (minimo 22.04)"
+            exit 1
+        fi
+    fi
+else
+    echo -e " ${BYELLOW}⚠${RST} No se pudo detectar el SO"
+fi
+
+# Instalar git si no existe
+if ! command -v git &>/dev/null; then
+    echo -e " ${BCYAN}▸${RST} Instalando git..."
+    apt-get install -y -qq git > /dev/null 2>&1
+fi
+
+# Clonar repositorio
+echo -e " ${BCYAN}▸${RST} Descargando panel VPS..."
+if [[ -d "$CLONE_DIR" ]]; then
+    echo -e " ${BYELLOW}⚠${RST} Carpeta ${CLONE_DIR} ya existe, actualizando..."
+    cd "$CLONE_DIR" && git pull --force 2>/dev/null || {
+        rm -rf "$CLONE_DIR"
+        git clone "$REPO" "$CLONE_DIR"
+    }
+else
+    git clone "$REPO" "$CLONE_DIR"
+fi
+
+echo -e " ${BGREEN}✔${RST} Descarga completa"
+
+# Ejecutar instalador principal
+echo -e " ${BCYAN}▸${RST} Ejecutando instalador..."
+cd "$CLONE_DIR"
+bash install.sh --force
+
+# Agregar comando 'menu' como alias
+ln -sf /usr/local/bin/VPS /usr/local/bin/menu 2>/dev/null || true
+
+# Limpiar archivo descargado
+rm -f /root/instalar 2>/dev/null
+
+echo ""
+echo -e " ${BGREEN}✔ INSTALACION COMPLETA${RST}"
+echo ""
+echo -e " ${BWHITE}Para entrar al panel:${RST}"
+echo -e " ${BGREEN}  VPS${RST}    o    ${BGREEN}menu${RST}"
+echo ""

@@ -202,9 +202,6 @@ install_files() {
     fi
 
     # Datos existentes (preservar si existen)
-    [[ -f "${SRC_DIR}/key.txt" ]]     && cp -n "${SRC_DIR}/key.txt" "${INSTALL_DIR}/"
-    [[ -f "${SRC_DIR}/idioma" ]]      && cp -n "${SRC_DIR}/idioma" "${INSTALL_DIR}/"
-    [[ -f "${SRC_DIR}/message.txt" ]]  && cp -n "${SRC_DIR}/message.txt" "${INSTALL_DIR}/"
     [[ -f "${SRC_DIR}/MEUIPvps" ]]    && cp -n "${SRC_DIR}/MEUIPvps" "${INSTALL_DIR}/"
 
     # Copiar usercodes (preservar existente)
@@ -232,7 +229,6 @@ set_permissions() {
 
     # Permisos seguros para datos (NO 777)
     chmod 700 "${INSTALL_DIR}/controlador" 2>/dev/null || true
-    chmod 600 "${INSTALL_DIR}/key.txt" 2>/dev/null || true
 
     msg_ok "Permisos configurados"
 }
@@ -253,8 +249,9 @@ exec /etc/VPS/menu "$@"
 SCRIPT
     chmod +x /usr/local/bin/VPS
 
-    # Alias en minúsculas para conveniencia
+    # Aliases para conveniencia
     ln -sf /usr/local/bin/VPS /usr/local/bin/vps 2>/dev/null || true
+    ln -sf /usr/local/bin/VPS /usr/local/bin/menu 2>/dev/null || true
 
     # Limpiar comandos viejos
     rm -f /usr/bin/vps /usr/bin/VPS /bin/VPS /bin/menu 2>/dev/null || true
@@ -319,10 +316,10 @@ show_summary() {
     echo -e "  ${BWHITE}Versión:${RST}     ${BCYAN}2.0.0${RST}"
     echo -e "  ${BWHITE}OS:${RST}          ${BCYAN}$(source /etc/os-release && echo "$PRETTY_NAME")${RST}"
     echo ""
-    echo -e "  ${BYELLOW}Para acceder al panel ejecuta:${RST}"
-    echo -e "  ${BWHITE}┌──────────────────────┐${RST}"
-    echo -e "  ${BWHITE}│  ${BGREEN}sudo VPS${BWHITE}             │${RST}"
-    echo -e "  ${BWHITE}└──────────────────────┘${RST}"
+    echo -e "  ${BYELLOW}Para acceder al panel:${RST}"
+    echo -e "  ${BWHITE}┌──────────────────────────────┐${RST}"
+    echo -e "  ${BWHITE}│  ${BGREEN}VPS${BWHITE}   o   ${BGREEN}menu${BWHITE}              │${RST}"
+    echo -e "  ${BWHITE}└──────────────────────────────┘${RST}"
     echo ""
     bar
 }
